@@ -1,0 +1,2007 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Management — 5 chantiers</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root {
+    --c-bg:#0f1117;--c-surface:#1a1d27;--c-border:#2a2d3e;
+    --c-purple:#7c6ff7;--c-teal:#2dd4a0;--c-amber:#f59e0b;
+    --c-coral:#f87171;--c-blue:#60a5fa;--c-green:#86efac;
+    --c-text:#e2e8f0;--c-muted:#94a3b8;
+  }
+  .reveal { font-family:'Inter',sans-serif; background:var(--c-bg); font-size:18px; }
+  .reveal .slides { text-align:left; }
+  .reveal h1,.reveal h2,.reveal h3 { font-family:'Inter',sans-serif; font-weight:600; text-transform:none; letter-spacing:-.02em; margin:0 0 .2em; }
+  .reveal h1 { font-size:2em; color:#fff; }
+  .reveal h2 { font-size:1.15em; color:#fff; margin-bottom:.25em; }
+  .reveal h3 { font-size:.62em; color:var(--c-muted); font-weight:500; text-transform:uppercase; letter-spacing:.08em; margin-bottom:.2em; }
+  .reveal p,.reveal li { font-size:.62em; color:var(--c-text); line-height:1.5; }
+  .reveal ul { list-style:none; padding:0; margin:0; }
+  .reveal ul li { margin-bottom:.25em; }
+  .reveal ul li::before { content:'—'; color:var(--c-muted); margin-right:.4em; }
+  .reveal code { font-family:'JetBrains Mono',monospace; }
+  .reveal pre { background:#0d1117; border:1px solid var(--c-border); border-radius:6px; padding:.45em .7em; margin:.25em 0; box-shadow:none; width:100%; }
+  .reveal pre code { font-size:.58em; line-height:1.4; }
+  .reveal section { padding:.6em 1.4em; }
+
+  .badge { display:inline-block; font-size:.52em; font-weight:600; padding:2px 8px; border-radius:20px; vertical-align:middle; margin-left:.3em; letter-spacing:.04em; }
+  .badge-purple { background:rgba(124,111,247,.2); color:var(--c-purple); border:1px solid rgba(124,111,247,.4); }
+  .badge-teal   { background:rgba(45,212,160,.15); color:var(--c-teal);   border:1px solid rgba(45,212,160,.3); }
+  .badge-amber  { background:rgba(245,158,11,.15); color:var(--c-amber);  border:1px solid rgba(245,158,11,.3); }
+  .badge-coral  { background:rgba(248,113,113,.15);color:var(--c-coral);  border:1px solid rgba(248,113,113,.3);}
+  .badge-blue   { background:rgba(96,165,250,.15); color:var(--c-blue);   border:1px solid rgba(96,165,250,.3); }
+
+  .card { background:var(--c-surface); border:1px solid var(--c-border); border-radius:8px; padding:.5em .8em; margin-bottom:.4em; }
+  .card-title { font-size:.62em; font-weight:600; color:#fff; margin-bottom:.15em; }
+  .card-sub   { font-size:.58em; color:var(--c-muted); line-height:1.45; }
+
+  .cols  { display:grid; grid-template-columns:1fr 1fr; gap:.8em; }
+  .cols3 { display:grid; grid-template-columns:1fr 1fr; gap:.6em; }
+
+  .chain { display:flex; flex-direction:column; gap:0; }
+  .chain-item { display:flex; align-items:center; gap:.6em; padding:.32em .7em; border-radius:5px; font-size:.58em; font-weight:500; color:#fff; margin-bottom:2px; }
+  .chain-arrow { text-align:center; color:var(--c-muted); font-size:.52em; line-height:1; margin:1px 0; padding-left:1.4em; }
+  .chain-err { margin-left:auto; font-size:.85em; font-weight:400; opacity:.8; white-space:nowrap; }
+
+  .bg-purple { background:rgba(124,111,247,.18); border:1px solid rgba(124,111,247,.25); }
+  .bg-gray   { background:rgba(148,163,184,.12); border:1px solid rgba(148,163,184,.2);  }
+  .bg-teal   { background:rgba(45,212,160,.12);  border:1px solid rgba(45,212,160,.2);   }
+  .bg-blue   { background:rgba(96,165,250,.12);  border:1px solid rgba(96,165,250,.2);   }
+  .bg-amber  { background:rgba(245,158,11,.12);  border:1px solid rgba(245,158,11,.2);   }
+  .bg-coral  { background:rgba(248,113,113,.12); border:1px solid rgba(248,113,113,.2);  }
+  .bg-green  { background:rgba(134,239,172,.12); border:1px solid rgba(134,239,172,.2);  }
+
+  .warning { background:rgba(245,158,11,.1); border-left:3px solid var(--c-amber); border-radius:0 5px 5px 0; padding:.4em .8em; font-size:.58em; color:var(--c-text); margin-top:.5em; }
+  .warning strong { color:var(--c-amber); }
+
+  .scope-table,.cost-table { width:100%; border-collapse:collapse; font-size:.56em; }
+  .scope-table th,.cost-table th { color:var(--c-muted); font-weight:500; text-align:left; padding:.3em .5em; border-bottom:1px solid var(--c-border); }
+  .scope-table td,.cost-table td { color:var(--c-text); padding:.25em .5em; border-bottom:1px solid rgba(42,45,62,.5); }
+  .cost-tag { display:inline-block; background:rgba(45,212,160,.15); color:var(--c-teal); border-radius:4px; padding:1px 5px; font-family:'JetBrains Mono',monospace; }
+
+  /* Table DB — contraste maximal, taille lisible */
+  .db-table { width:100%; border-collapse:collapse; font-size:.72em; }
+  .db-table th { font-weight:600; text-align:left; padding:.4em .7em; border-bottom:2px solid #3a3d50; color:#fff; background:#0d1117; }
+  .db-table td { padding:.35em .7em; border-bottom:1px solid #1e2130; vertical-align:top; }
+  .db-table td:first-child { font-family:'JetBrains Mono',monospace; color:#e2e8f0; font-weight:500; white-space:nowrap; }
+  .db-table td:nth-child(2) { color:#94a3b8; white-space:nowrap; }
+  .db-table td:nth-child(3) { color:#cbd5e1; }
+  .db-table tr:hover td { background:rgba(255,255,255,.03); }
+
+  .point-num { display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:50%; font-size:.55em; font-weight:700; flex-shrink:0; }
+
+  .title-eyebrow { font-size:.52em; font-weight:500; color:var(--c-purple); letter-spacing:.12em; text-transform:uppercase; margin-bottom:.5em; }
+  .title-sub { font-size:.58em; color:var(--c-muted); margin-top:.6em; line-height:1.6; }
+
+  .q-list li { font-size:.64em; color:var(--c-text); margin-bottom:.35em; }
+  .q-list li::before { content:'?'; color:var(--c-amber); font-weight:700; }
+  .q-blocking { color:var(--c-coral) !important; }
+  .q-blocking::before { content:'⚠'; color:var(--c-coral) !important; }
+
+  .ic { font-family:'JetBrains Mono',monospace; font-size:.85em; background:rgba(124,111,247,.15); color:var(--c-purple); padding:1px 6px; border-radius:4px; }
+  .db-table td .ic { background:rgba(255,255,255,.08); color:#e2e8f0; }
+
+  .reveal .progress { background:rgba(255,255,255,.1); }
+  .reveal .progress span { background:var(--c-purple); }
+  .reveal .controls { color:var(--c-purple); }
+
+  /* Scroll sur slides avec beaucoup de contenu */
+  .reveal .slides { overflow: visible; }
+  .reveal .slides section {
+    overflow-y: auto;
+    max-height: 680px;
+    box-sizing: border-box;
+  }
+  .reveal .slides section::-webkit-scrollbar { width: 4px; }
+  .reveal .slides section::-webkit-scrollbar-track { background: transparent; }
+  .reveal .slides section::-webkit-scrollbar-thumb { background: #2a2d3e; border-radius: 2px; }
+  .reveal .slides section::-webkit-scrollbar-thumb:hover { background: var(--c-purple); }
+
+  /* cycle de vie */
+  .cv-row { font-size:.54em; line-height:1.75; }
+  .cv-pass  { color:var(--c-teal); }
+  .cv-fail  { color:var(--c-coral); }
+  .cv-noop  { color:var(--c-muted); }
+
+  /* Tabs */
+  .tabs { display:flex; gap:0; margin-bottom:0; border-bottom:1px solid var(--c-border); }
+  .tab-btn { font-size:.62em; font-weight:500; padding:.35em 1.1em; background:none; border:none; color:var(--c-muted); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; transition:all .15s; }
+  .tab-btn:hover { color:var(--c-text); }
+  .tab-btn.active { color:#fff; border-bottom-color:var(--c-purple); }
+  .tab-panel { display:none; padding-top:.5em; }
+  .tab-panel.active { display:block; }
+  .tab-wrap { background:var(--c-surface); border:1px solid var(--c-border); border-radius:8px; overflow:hidden; }
+  .tab-wrap .tabs { padding:.3em .6em 0; background:rgba(0,0,0,.15); }
+  .tab-wrap .tab-panel { padding:.5em .8em .7em; }
+  .tab-wrap pre { margin:0; }
+  .tab-wrap pre code { font-size:1em; line-height:1.55; }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITRE -->
+<section>
+  <div class="title-eyebrow">Revue d'architecture</div>
+  <h1>API Management<br><span style="color:var(--c-purple)">5 chantiers</span></h1>
+  <p class="title-sub">
+    Construire une couche API publique (clés, quotas, crédits, versioning, scopes)<br>
+    sans toucher à l'API interne existante — front Smappen, widgets embarqués.
+  </p>
+</section>
+
+<!-- POINT 1 -->
+<section>
+  <h3>Point 1</h3>
+  <h2>Clés API <span class="badge badge-teal">Auth</span></h2>
+  <div class="tab-wrap">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="p1-standards">Standards</button>
+      <button class="tab-btn" data-tab="p1-decorators">Décorateurs</button>
+      <button class="tab-btn" data-tab="p1-endpoints">Endpoints à créer</button>
+      <button class="tab-btn" data-tab="p1-db">Base de données</button>
+      <button class="tab-btn" data-tab="p1-questions">Questions</button>
+    </div>
+    <div id="p1-standards" class="tab-panel active">
+      <div class="cols">
+
+        <div class="card" style="border-color:rgba(45,212,160,.3)">
+          <div class="card-title" style="color:var(--c-teal)">Format — préfixe structuré ✓</div>
+          <div class="card-sub">
+            Standard Stripe/GitHub/OpenAI.<br><br>
+            <table class="scope-table" style="font-size:.85em;margin-bottom:.5em">
+              <tr>
+                <th style="color:#60a5fa">Partie publique — en clair en DB</th>
+                <th style="color:#f59e0b">Partie secrète — hashée en DB</th>
+              </tr>
+              <tr>
+                <td><span class="ic">sk_sm_live_Ab12Cd</span></td>
+                <td><span class="ic">_xyz789efgh...</span></td>
+              </tr>
+              <tr>
+                <td>Stocké tel quel — sert au lookup<br><span class="ic">WHERE prefix = 'sk_live_Ab12Cd'</span></td>
+                <td>Stocké en <span class="ic">SHA-256</span> uniquement<br>Jamais ré-affichable</td>
+              </tr>
+            </table>
+            <strong style="color:#e2e8f0">sk_</strong> — secret scanning (Gitleaks détecte les commits accidentels)<br>
+	    <strong style="color:#e2e8f0">sm</strong> — nom de l'organisation (ready pour secret scanning)<br>
+            <strong style="color:#94a3b8">live/test</strong> — environnement visible immédiatement <span style="color:#94a3b8">(hors périmètre MVP)</span><br>
+            <strong style="color:#e2e8f0">aléatoire haute entropie</strong> — Base62, résistant à la force brute sans bcrypt
+          </div>
+        </div>
+
+        <div class="card" style="border-color:rgba(45,212,160,.3)">
+          <div class="card-title" style="color:var(--c-teal)">Transport ✓</div>
+          <div class="card-sub">
+            <strong style="color:#2dd4a0">✓ Retenu</strong> <span class="ic">Authorization: Bearer sk_...</span> — standard HTTP, utilisé par Stripe, OpenAI<br><br>
+            <strong style="color:#94a3b8">✓ Acceptable</strong> <span class="ic">X-API-Key: sk_...</span> — header custom, utilisé par AWS, Google<br><br>
+            <strong style="color:#f87171">✗ Interdit</strong> <span class="ic">?api_key=sk_...</span> — URLs loggées en clair partout
+          </div>
+        </div>
+
+        <div class="card" style="border-color:rgba(45,212,160,.3)">
+          <div class="card-title" style="color:var(--c-teal)">Stockage — jamais en clair ✓</div>
+          <div class="card-sub">
+            <strong>1.</strong> Stocker <span class="ic">SHA-256(secret)</span> uniquement<br>
+            <strong>2.</strong> Stocker le <span class="ic">prefix</span> en clair pour le lookup<br>
+            <strong>3.</strong> <span class="ic">WHERE prefix = ? AND key_hash = SHA256(clé reçue)</span><br><br>
+            <span style="color:#94a3b8">SHA-256 suffit — l'entropie d'une clé aléatoire rend bcrypt inutile.</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Cycle de vie</div>
+          <div class="card-sub">
+            <strong style="color:#2dd4a0">✓ Multiple keys</strong> — isolation par environnement, rotation sans coupure<br>
+            <strong style="color:#2dd4a0">✓ Secret masking</strong> — affiché une fois, ensuite <span class="ic">sk_AbCdE••••••••••</span><br>
+            <strong style="color:#2dd4a0">✓ Least privilege</strong> — scopes à la création (en discussion, voir Point 5)<br>
+            <strong style="color:#94a3b8">◌ IP Whitelisting</strong> — hors périmètre MVP
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="p1-decorators" class="tab-panel">
+      <div style="margin-bottom:.5em;padding:.4em .8em;background:rgba(45,212,160,.08);border:1px solid rgba(45,212,160,.25);border-radius:6px;font-size:.6em;color:#e2e8f0">
+        <strong style="color:var(--c-teal)">Un seul décorateur de surface</strong> — <span class="ic">@PublicExternalRoute()</span> encapsule toute la logique d'auth, de guards et de scopes pour les routes externes. Les décorateurs bas niveau (<span class="ic">@IsPublic()</span>, <span class="ic">@RequireAuth()</span>) restent des détails d'implémentation internes.
+      </div>
+      <div class="cols">
+        <div class="card" style="border-color:rgba(45,212,160,.3)">
+          <div class="card-title" style="color:var(--c-teal)">@PublicExternalRoute({ authType, scope })</div>
+          <div class="card-sub">
+            Seul décorateur à poser sur les controllers externes. Injecte localement :<br>
+            <span class="ic">ApiVersionSunsetGuard</span> — endpoint retiré ?<br>
+            <span class="ic">ApiKeyIdentityGuard</span> — résout la clé <br>
+            <span class="ic">ScopeGuard</span> — scope vérifié<br>
+            Pose <span class="ic">@IsPublic()</span> — toujours, car <code>@PublicExternalRoute()</code> est par définition une route externe accessible sans JWT.
+          </div>
+          <pre style="margin-top:.4em"><code class="language-typescript">export function PublicExternalRoute(options: {
+  authType: 'api-key' | 'hybrid',
+  scope?: string,
+}) {
+  const guards = [ApiVersionSunsetGuard, ApiKeyIdentityGuard, ScopeGuard];
+  return applyDecorators(
+    IsPublic(), // toujours — @PublicExternalRoute est toujours une route externe
+    SetMetadata(AUTH_TYPE_KEY, options.authType),
+    SetMetadata(SCOPE_KEY, options.scope),
+    UseGuards(...guards),
+  );
+}</code></pre>
+        </div>
+        <div class="card">
+          <div class="card-title">authType</div>
+          <div class="card-sub">
+            <strong style="color:#fff">'api-key'</strong> — API Key obligatoire. Routes purement programmatiques. <strong>Cas le plus courant.</strong><br><br>
+            <strong style="color:#fff">'hybrid'</strong> — JWT <em>ou</em> API Key. Routes de gestion accessibles depuis le dashboard ou par script (ex : créer sa première clé).<br><br>
+            
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:.4em;padding:.35em .8em;background:rgba(255,255,255,.04);border-radius:6px;font-size:.62em;color:#94a3b8">
+        <strong style="color:#e2e8f0">Coexistence avec le code existant</strong> — <span class="ic">@Public()</span> reste sur les controllers internes qui en ont besoin. Le test CI vérifie uniquement les controllers versionnés — les controllers internes ne sont pas dans le scope du test.
+      </div>
+    </div>
+    <div id="p1-endpoints" class="tab-panel">
+      <div class="cols">
+        <div class="card" style="border-color:rgba(45,212,160,.3);margin-bottom:.5em;grid-column:1/-1">
+          <div class="card-title" style="color:var(--c-teal)">Sur l'API externe versionnée — pas sur l'API interne</div>
+          <div class="card-sub">
+            Ces 3 endpoints sont sur <span class="ic">/api/v1/...</span> (<span class="ic">version: '1'</span>), pas sur l'API interne <span class="ic">VERSION_NEUTRAL</span>.<br>
+            Ils acceptent <strong>JWT ou API Key</strong> (<span class="ic">authType: 'hybrid'</span>) — le client doit pouvoir créer sa première clé depuis son dashboard (JWT) avant d'en avoir une.
+            C'est le cas des routes de <strong>gestion</strong> — contrairement aux routes de <strong>données</strong> (<span class="ic">catalog</span>, <span class="ic">analysis</span>...) qui n'acceptent que les API Keys (<span class="ic">authType: 'api-key'</span>).
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">POST /api/v1/api-keys</div>
+          <div class="card-sub">
+            Crée une nouvelle clé. Le secret est retourné <strong>une seule fois</strong>.<br><br>
+            <span class="ic">@PublicExternalRoute({ authType: 'hybrid', scope: 'api-keys:manage' })</span><br><br>
+            Body : <span class="ic">{ name, scopes?, expiresAt? }</span>
+          </div>
+          <pre style="margin-top:.4em"><code class="language-json">{
+  "id": 42,
+  "prefix": "sk_AbCdE",
+  "secret": "sk_AbCdEf123456...",
+  "scopes": ["maps:read"],
+  "createdAt": "2026-06-22T10:00:00Z"
+}</code></pre>
+        </div>
+        <div class="card">
+          <div class="card-title">GET /api/v1/api-keys</div>
+          <div class="card-sub">
+            Liste toutes les clés du client. Le secret n'apparaît jamais.<br><br>
+            <span class="ic">@PublicExternalRoute({ authType: 'hybrid', scope: 'api-keys:manage' })</span>
+          </div>
+          <pre style="margin-top:.4em"><code class="language-json">[{
+  "id": 42, "name": "Script nuit",
+  "prefix": "sk_AbCdE",
+  "scopes": ["maps:read"],
+  "lastUsedAt": "2026-06-22T09:30:00Z",
+  "revoked": false
+}]</code></pre>
+        </div>
+        <div class="card">
+          <div class="card-title">DELETE /api/v1/api-keys/:id</div>
+          <div class="card-sub">
+            Révoque une clé — immédiatement rejetée sur toute requête suivante.<br><br>
+            <span class="ic">@PublicExternalRoute({ authType: 'hybrid', scope: 'api-keys:manage' })</span><br><br>
+            Une clé peut se révoquer elle-même. CASL vérifie que la clé appartient au client appelant.
+          </div>
+          <pre style="margin-top:.4em"><code class="language-http">DELETE /api/v1/api-keys/42
+→ 204 No Content</code></pre>
+        </div>
+      </div>
+    </div>
+    <div id="p1-db" class="tab-panel">
+      <div class="card" style="margin-bottom:.5em">
+        <div class="card-title" style="font-size:.8em;margin-bottom:.4em">Nouvelle table — <span class="ic">api_key</span></div>
+            <table class="db-table">
+              <tr><th>Colonne</th><th>Type</th><th>Description</th></tr>
+              <tr><td><span class="ic">id</span></td><td>serial</td><td>Clé primaire</td></tr>
+              <tr><td><span class="ic">name</span></td><td>text</td><td>Nom donné par le client</td></tr>
+              <tr><td><span class="ic">key_hash</span></td><td>text unique</td><td>SHA-256 du secret — jamais le secret en clair</td></tr>
+              <tr><td><span class="ic">prefix</span></td><td>text (index)</td><td>8 premiers caractères — sert au lookup rapide</td></tr>
+              <tr><td><span class="ic">client_id</span></td><td>int FK → client</td><td>Propriétaire de la clé</td></tr>
+              <tr><td><span class="ic">scopes</span></td><td>text[]</td><td>Liste des scopes accordés</td></tr>
+              <tr><td><span class="ic">expires_at</span></td><td>timestamptz null</td><td>Date d'expiration optionnelle</td></tr>
+              <tr><td><span class="ic">last_used_at</span></td><td>timestamptz null</td><td>Dernière utilisation (informatif)</td></tr>
+              <tr><td><span class="ic">revoked_at</span></td><td>timestamptz null</td><td>Date de révocation</td></tr>
+              <tr><td><span class="ic">created_at</span></td><td>timestamptz</td><td>Date de création</td></tr>
+            </table>
+      </div>
+      <div class="cols" style="margin-top:.5em">
+        <div class="card">
+          <div class="card-title">Tables existantes modifiées</div>
+          <div class="card-sub">Aucune — <span class="ic">Client</span>, <span class="ic">Subscription</span>, <span class="ic">Product</span> sont lues telles quelles.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Index créés</div>
+          <div class="card-sub">
+            <span class="ic">api_key.prefix</span> — lookup rapide avant comparaison du hash<br>
+            <span class="ic">api_key.key_hash</span> — unique (index implicite)
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div id="p1-questions" class="tab-panel">
+
+      <div style="font-size:.62em;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#f59e0b;margin-bottom:.3em">Importantes — à définir </div>
+      <div style="display:flex;flex-direction:column;gap:.4em">
+        <div class="card" style="border-color:rgba(245,158,11,.25)">
+          <div class="card-title">Durée de vie par défaut</div>
+          <div class="card-sub">Illimitée ou expiration automatique (1 an) ? Une expiration forcée améliore la sécurité mais impose une rotation aux clients.</div>
+        </div>
+        <div class="card" style="border-color:rgba(245,158,11,.25)">
+          <div class="card-title">Nombre maximum de clés par client</div>
+          <div class="card-sub">Illimité ou plafonné ? Un client peut vouloir une clé par environnement (dev, staging, prod) ou par usage.</div>
+        </div>
+        <div class="card" style="border-color:rgba(245,158,11,.25)">
+          <div class="card-title">Adopter <span class="ic">@PublicExternalRoute()</span> comme convention  ?</div>
+          <div class="card-sub">Ce décorateur encapsule toute la chaîne de guards locaux — impossible d'oublier un guard ou un scope sur un controller externe. Le garde-fou CI vérifie que tout controller versionné porte <span class="ic">@PublicExternalRoute()</span>.</div>
+        </div>
+        <div class="card" style="border-color:rgba(245,158,11,.25)">
+          <div class="card-title">Dashboard de gestion des clés dans l'UI ?</div>
+          <div class="card-sub">Créer, lister, révoquer depuis l'application — ou uniquement via l'API ? Impact direct sur le périmètre front.</div>
+        </div>
+        <div class="card" style="border-color:rgba(245,158,11,.25)">
+          <div class="card-title">Bootstrap de la première clé</div>
+          <div class="card-sub">Le client crée sa première clé via JWT de session — est-ce documenté et suffisant, ou faut-il un flow dédié (email, onboarding) ?</div>
+        </div>
+
+
+        <div class="card" style="border-color:rgba(245,158,11,.25)">
+          <div class="card-title">Notification email</div>
+          <div class="card-sub">Notifier le client à la création et à la révocation d'une clé ?</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- POINT 2 -->
+<section>
+  <h3>Point 2</h3>
+  <h2>Rate Limiting <span class="badge badge-amber">Quota</span></h2>
+  <div class="tab-wrap">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="p2-standards">Standards</button>
+      <button class="tab-btn" data-tab="p2-questions">Questions</button>
+    </div>
+    <div id="p2-standards" class="tab-panel active">
+      <div class="cols">
+
+        <div class="card" style="border-color:rgba(45,212,160,.3)">
+          <div class="card-title" style="color:var(--c-teal)">Algorithme — Sliding Window ✓</div>
+          <div class="card-sub">
+            Standard moderne utilisé par la majorité des API Gateways. Calcule la consommation sur les <strong>N dernières secondes glissantes</strong> — élimine les pics de charge du Fixed Window.<br><br>
+            <strong style="color:#94a3b8">Fixed Window</strong> — simple mais imparfait : 100 req à 14h59 + 100 req à 15h01 = 200 req en 2min sans être bloqué.<br>
+            <strong style="color:#94a3b8">Token Bucket</strong> — plus fluide mais complexe à maintenir.<br>
+            <strong style="color:#2dd4a0">Sliding Window</strong> — compromis parfait, natif dans NestJS Throttler + Redis.
+          </div>
+        </div>
+
+        <div class="card" style="border-color:rgba(45,212,160,.3)">
+          <div class="card-title" style="color:var(--c-teal)">Tier-Based Bursting — deux paliers en parallèle ✓</div>
+          <div class="card-sub">
+            Un développeur peut envoyer une rafale accidentelle (boucle mal synchronisée) puis plus rien pendant une heure. Avec un seul palier strict, il se prend des 429 dès la 2ème seconde.<br><br>
+            La solution : <strong>deux fenêtres qui s'exécutent en parallèle</strong>. Une requête est bloquée si l'une des deux barrières est franchie :<br><br>
+            <strong style="color:#fff">Burst Rate</strong> — fenêtre courte (ex: 5 req/s) — empêche de paralyser le serveur instantanément<br>
+            <strong style="color:#fff">Sustained Rate</strong> — fenêtre longue (ex: 1000 req/min) — protège la capacité globale<br><br>
+            <span style="color:#94a3b8">Correspond aux paliers <span class="ic">short</span> + <span class="ic">medium</span> de NestJS Throttler — natif, rien à coder.</span>
+          </div>
+        </div>
+
+        <div class="card" style="border-color:rgba(45,212,160,.3)">
+          <div class="card-title" style="color:var(--c-teal)">Segmentation ✓</div>
+          <div class="card-sub">
+            <strong style="color:#2dd4a0">Routes externes authentifiées</strong> → par clé API (<span class="ic">bearer:{prefix}</span>) ou par compte (<span class="ic">account:{clientId}</span>)<br>
+            <strong style="color:#2dd4a0">Routes anonymes</strong> → par IP<br><br>
+            Standard industrie : clé API pour les clients identifiés, IP pour l'anonyme (protection force brute sur login, inscription...).
+          </div>
+        </div>
+
+        <div class="card" style="border-color:rgba(45,212,160,.3)">
+          <div class="card-title")">Headers de réponse </div>
+          <div class="card-sub">
+            Standard de fait (IETF Draft, adopté par GitHub, Twitter) — à renvoyer sur <strong>chaque réponse</strong> :<br><br>
+            <span class="ic">X-RateLimit-Limit: 1000</span> — quota de la période<br>
+            <span class="ic">X-RateLimit-Remaining: 985</span> — requêtes restantes<br>
+            <span class="ic">X-RateLimit-Reset: 1772124000</span> — timestamp Unix du reset<br><br>
+            Permet au client d'adapter son débit proactivement sans attendre le 429. <br> Nestjs -> Override du throttlerGuard 
+          </div>
+        </div>
+
+        <div class="card" style="border-color:rgba(45,212,160,.3)">
+          <div class="card-title" style="color:var(--c-teal)">Réponse 429 ✓</div>
+          <div class="card-sub">
+            <span class="ic">HTTP 429 Too Many Requests</span> (RFC 6585) — jamais 403 ou 400.<br><br>
+            Header obligatoire :<br>
+            <span class="ic">Retry-After: 60</span> — secondes à attendre avant de réessayer<br><br>
+            Corps (RFC 7807 Problem Details) :
+          </div>
+          <pre style="margin-top:.3em"><code class="language-json">{
+  "type": "https://api.smappen.com/errors/rate-limit-exceeded",
+  "title": "Too Many Requests",
+  "status": 429,
+  "detail": "Quota de 1000 req/heure dépassé. Reset dans 60 secondes."
+}</code></pre>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="p2-questions" class="tab-panel">
+      <div style="display:flex;flex-direction:column;gap:.4em">
+        <div class="card">
+          <div class="card-title">Bucketing — proposition à valider</div>
+          <div class="card-sub">
+            <strong style="color:#fff">Routes externes → par clé API ou par client</strong><br>
+            Par clé : surcharger <span class="ic">getTracker()</span> → <span class="ic">bearer:{prefix}</span> si <span class="ic">Authorization</span> commence par <span class="ic">sk_</span>. Pas de résolution DB.<br>
+            Par client : <span class="ic">account:{clientId}</span> — nécessite de résoudre la clé avant le bucketing (lookup DB ou cache Redis).<br><br>
+            <strong style="color:#fff">Routes anonymes → par IP</strong><br>
+            Comportement actuel du <span class="ic">ThrottlerGuard</span> global, inchangé.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Quelles limites par plan ?</div>
+          <div class="card-sub">À définir avec l'équipe produit.<br>
+            <span style="color:#94a3b8">Essential → short: ?, medium: ? &nbsp; Pro → short: ?, medium: ? &nbsp; Advanced → short: ?, medium: ?</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Palier <span class="ic">short</span> — utile ou friction inutile ?</div>
+          <div class="card-sub">Peut bloquer un client légitime qui envoie une petite rafale. Si tous les clients sont des scripts bien écrits, <span class="ic">medium</span> seul suffit peut-être.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Limites différentes par type de route ?</div>
+          <div class="card-sub">Ex : routes d'analyse plus restrictives que les routes de lecture.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POINT 3 -->
+<section>
+  <h3>Point 3</h3>
+  <h2>Crédits <span class="badge badge-coral">Facturation</span></h2>
+  <div class="tab-wrap">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="p3-standards">Standards</button>
+      <button class="tab-btn" data-tab="p3-comparatif">Comparatif</button>
+      <button class="tab-btn" data-tab="p3-decorators">Décorateurs</button>
+      <button class="tab-btn" data-tab="p3-code" style="display:none">Exemple code</button>
+      <button class="tab-btn" data-tab="p3-endpoints">Endpoints à créer</button>
+      <button class="tab-btn" data-tab="p3-questions">Questions</button>
+    </div>
+
+    <!-- STANDARDS -->
+    <div id="p3-standards" class="tab-panel active">
+      <div class="cols">
+
+        <div class="card" style="border-color:rgba(45,212,160,.3)">
+          <div class="card-title" style="color:var(--c-teal)">Monnaie unique — le Crédit ✓</div>
+          <div class="card-sub">
+            Standard de l'industrie (OpenAI, Shopify, Google Maps API). Au lieu de facturer à la requête, on abstrait via une unité commune — le crédit.<br><br>
+            Chaque endpoint a un coefficient de coût basé sur sa consommation réelle CPU/DB :<br><br>
+            <span class="ic">@CreditCost(1)</span> — route légère (lookup, liste)<br>
+            <span class="ic">@CreditCost(2)</span> — géocodage<br>
+            <span class="ic">@CreditCost(10)</span> — isochrone, calcul lourd<br><br>
+            Absent → gratuit (routes de consultation, API interne)
+          </div>
+        </div>
+
+        <div class="card" style="border-color:rgba(45,212,160,.3)">
+          <div class="card-title" style="color:var(--c-teal)">Pre-flight check — HTTP 402 ✓</div>
+          <div class="card-sub">
+            Le guard valide que le solde est suffisant <strong>avant</strong> d'exécuter la logique métier. Si insuffisant → <span class="ic">HTTP 402 Payment Required</span> instantané, le handler n'est jamais appelé.<br><br>
+            <span class="ic">402</span> est le code HTTP sémantiquement correct — "paiement requis". Jamais <span class="ic">403</span> ni <span class="ic">429</span>.
+          </div>
+        </div>
+
+        <div class="card" style="border-color:rgba(248,113,113,.3)">
+          <div class="card-title" style="color:#f87171">Grille de facturation — standard industrie 2026 — à trancher</div>
+          <div class="card-sub">
+            <table class="scope-table" style="font-size:.85em">
+              <tr><th>Statut</th><th>Facturé ?</th><th>Raison</th></tr>
+              <tr><td><span class="ic">2xx</span></td><td style="color:#2dd4a0">Oui</td><td>Valeur livrée</td></tr>
+              <tr><td><span class="ic">3xx</span></td><td style="color:#94a3b8">Non</td><td>Simple routage HTTP</td></tr>
+              <tr><td><span class="ic">401 / 403 / 429 / 402</span></td><td style="color:#94a3b8">Non</td><td>Sécurité et quotas — évite les litiges</td></tr>
+              <tr><td><span class="ic">400 / 404</span></td><td style="color:#94a3b8">Non</td><td>Tolérance DX — fautes de frappe, tests</td></tr>
+              <tr><td><span class="ic">5xx</span></td><td style="color:#f87171">Non (remboursé)</td><td>Faute plateforme — nécessite un rollback Redis + DailyStat</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="card" style="border-color:rgba(245,158,11,.25)">
+          <div class="card-title" style="color:#f59e0b">4xx Rate Limiting — parade anti-abus </div>
+          <div class="card-sub">
+            Si les erreurs sont gratuites, un attaquant peut bombarder l'API de requêtes invalides sans jamais vider son solde — pour saturer les serveurs ou scanner l'API.<br><br>
+            Standard de fait : si un client enchaîne trop de <span class="ic">4xx</span> sur une courte fenêtre, sa clé est temporairement bloquée (<span class="ic">429</span>).<br><br>
+            <span style="color:#94a3b8">Géré par <span class="ic">ThrottlerGuard</span> existant — pas de code supplémentaire si le bucketing par clé est adopté.</span>
+          </div>
+        </div>
+
+        <div class="card" style="border-color:rgba(45,212,160,.3)">
+          <div class="card-title" style="color:var(--c-teal)">Headers de réponse ✓</div>
+          <div class="card-sub">
+            Bonne pratique industrie — à renvoyer sur chaque réponse d'une route payante :<br><br>
+            <span class="ic">X-Credits-Cost: 2</span> — coût de la requête courante<br>
+            <span class="ic">X-Credits-Remaining: 8420</span> — solde après déduction<br><br>
+            Permet au client de monitorer sa consommation sans appeler <span class="ic">/usage</span> à chaque fois.<br><br>
+            <span style="color:#94a3b8">Ces headers sont propriétaires — pas de standard IETF. Chaque provider nomme les siens différemment (OpenAI, Stripe...). La convention <span class="ic">X-Credits-*</span> est claire et cohérente.</span>
+          </div>
+        </div>
+
+        <div class="card" style="border-color:rgba(45,212,160,.3)">
+          <div class="card-title" style="color:var(--c-teal)">Corps de réponse 402 ✓</div>
+          <div class="card-sub">
+            Format cohérent avec les autres erreurs de l'API :
+          </div>
+          <pre style="margin-top:.3em"><code class="language-json">{
+  "errorKey": "api_credits_exhausted",
+  "required": 10,
+  "balance": 3,
+  "detail": "Solde insuffisant. Achetez des crédits supplémentaires."
+}</code></pre>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CONCEPT -->
+    <div id="p3-comparatif" class="tab-panel">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1em;margin-bottom:.8em">
+
+        <!-- COLONNE GAUCHE — DailyStat + Redis -->
+        <div>
+          <div style="padding:.3em .6em;background:rgba(45,212,160,.08);border:1px solid rgba(45,212,160,.25);border-radius:6px;font-size:.6em;color:#e2e8f0;margin-bottom:.5em">
+            <strong style="color:var(--c-teal)">Approche DailyStat + Redis</strong> — zéro nouvelle table, réutilise l'infra Dania
+          </div>
+          <div class="cols">
+            <div class="card">
+              <div class="card-title">Concept</div>
+              <div class="card-sub">
+                Réutilise <span class="ic">DailyStat</span> (déjà en place pour Dania).<br><br>
+                <strong style="color:#fff">Pourquoi Redis ?</strong> <span class="ic">DailyStat</span> stocke un compteur qui monte — pour vérifier le quota, il faut lire, calculer, puis écrire (3 étapes séparées). Sous charge concurrente, deux requêtes peuvent lire le même solde et toutes les deux passer. Redis résout ça avec <span class="ic">INCRBY</span> — une opération atomique indivisible, comme un verrou sur la caisse.<br><br>
+                <span style="color:#94a3b8">C'est l'avantage de <span class="ic">credit_account</span> : <span class="ic">UPDATE WHERE balance >= cost</span> est nativement atomique en Postgres — pas besoin de Redis.</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Stockage — deux couches</div>
+              <div class="card-sub">
+                <strong style="color:#f59e0b">Redis</strong> — compteur temps réel du jour en cours. <span class="ic">INCRBY</span> atomique → pas de race condition.<br><br>
+                <strong style="color:#60a5fa">DailyStat</strong> — historique longue durée, écrit en arrière-plan. <span class="ic">domain</span> = id de la clé appelante.<br><br>
+                <strong style="color:#fff">Total mensuel</strong> = <span class="ic">SUM(DailyStat jours passés)</span> + <span class="ic">Redis aujourd'hui</span>
+              </div>
+            </div>
+            <div class="card" style="grid-column:1/-1">
+              <div class="card-title">DailyStat — domain = clé API, pas de constante fixe</div>
+              <div class="card-sub">
+                Deux familles de tags, sans toucher au schéma :<br><br>
+                <span class="ic">product = 'api_credit_usage'</span>, <span class="ic">domain = apiKey.id</span><br>
+                → pool de crédits — plafond sommé sur toutes les clés du client<br><br>
+                <span class="ic">product = 'api_requests:&lt;catégorie&gt;'</span>, <span class="ic">domain = apiKey.id</span><br>
+                → comptage d'appels par catégorie — jamais dans le plafond<br><br>
+                Grâce à la contrainte unique <span class="ic">[client, domain, product, date]</span> déjà en place, la répartition par clé et par catégorie est obtenue gratuitement — pas de colonne supplémentaire, pas de migration sur cette table.
+              </div>
+            </div>
+            <div class="card" style="grid-column:1/-1">
+              <div class="card-title">Exemple — quota 1000 crédits/mois, on est le 15</div>
+              <div class="card-sub" style="display:grid;grid-template-columns:1fr 1fr;gap:.8em">
+                <div>
+                  <strong style="color:#60a5fa">DailyStat (jours passés)</strong>
+                  <pre style="margin-top:.3em;font-size:.8em"><code>date        counter
+2026-06-01  42
+2026-06-02  80
+...
+2026-06-14  35
+─────────────────
+SUM = 850 crédits</code></pre>
+                </div>
+                <div>
+                  <strong style="color:#f59e0b">Redis (aujourd'hui)</strong>
+                  <pre style="margin-top:.3em;font-size:.8em"><code>api:credits:
+  client123:
+  2026-06-15
+= 100 crédits</code></pre>
+                  <div style="margin-top:.3em;font-size:.85em">Total = 850 + 100 = <strong style="color:#fff">950</strong><br>Restant = <strong style="color:#2dd4a0">50 crédits</strong></div>
+                </div>
+                <div>
+                  <strong style="color:#2dd4a0">50 req @CreditCost(10) simultanées</strong>
+                  <pre style="margin-top:.3em;font-size:.8em"><code>pastDays = 850 (cache)
+req 1  → INCRBY 10 → 110 → 960  ✓
+req 5  → INCRBY 10 → 150 → 1000 ✓
+req 6  → INCRBY 10 → 160 → 1010 ✗
+         DECRBY 10 → rollback → 402</code></pre>
+                </div>
+              </div>
+            </div>
+            <div class="card" style="grid-column:1/-1">
+              <div class="card-title">Historique DailyStat — agrégat par jour et par clé</div>
+              <div class="card-sub">
+                <pre style="margin-top:.3em;font-size:.8em"><code>product                  domain      date        counter
+─────────────────────────────────────────────────────────
+api_credit_usage         apikey_42   2026-06-15  150    ← 150 crédits consommés par la clé 42
+api_credit_usage         apikey_87   2026-06-15   30    ← 30 crédits par la clé 87
+api_requests:geocode     apikey_42   2026-06-15   12    ← 12 appels géocodage clé 42
+api_requests:geocode     apikey_87   2026-06-15    3    ← 3 appels géocodage clé 87
+
+SUM(api_credit_usage, client123, juin) = 1000 → plafond atteint (toutes clés confondues)</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLONNE DROITE — credit_account -->
+        <div>
+          <div style="padding:.3em .6em;background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.2);border-radius:6px;font-size:.6em;color:#94a3b8;margin-bottom:.5em">
+            <strong style="color:#e2e8f0">Approche initiale — credit_account + credit_history</strong> — tables dédiées, audit complet par appel
+          </div>
+          <div class="cols">
+            <div class="card">
+              <div class="card-title">Concept</div>
+              <div class="card-sub">Solde mensuel par client dans <span class="ic">credit_account</span>. Chaque appel payant débite atomiquement. Solde à 0 → <span class="ic">402</span>.</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Table credit_account</div>
+              <div class="card-sub">
+                Une ligne par client, solde muté en place.<br><br>
+                <span class="ic">client_id</span> unique FK<br>
+                <span class="ic">balance</span> int — décrémenté atomiquement<br>
+                <span class="ic">last_granted_credits</span> int<br>
+                <span class="ic">updated_at</span> timestamptz
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Table credit_history</div>
+              <div class="card-sub">
+                Append-only, audit complet par appel.<br><br>
+                <span class="ic">type</span> : <span class="ic">monthly_grant</span> / <span class="ic">purchase</span> / <span class="ic">consumption</span><br>
+                <span class="ic">amount</span> int signé, <span class="ic">balance_after</span> int<br>
+                <span class="ic">route_path</span> text null<br>
+                <span class="ic">stripe_payment_intent_id</span> text null
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Débit atomique Postgres</div>
+              <div class="card-sub"><span class="ic">UPDATE credit_account SET balance = balance - cost WHERE client_id = ? AND balance >= cost</span><br><br>0 ligne affectée → 402. Pas de Redis, pas de race condition.</div>
+            </div>
+            <div class="card" style="grid-column:1/-1">
+              <div class="card-title">Exemple — solde actuel 50 crédits, @CreditCost(10)</div>
+              <div class="card-sub" style="display:grid;grid-template-columns:1fr 1fr;gap:.8em">
+                <div>
+                  <strong style="color:#60a5fa">credit_account avant</strong>
+                  <pre style="margin-top:.3em;font-size:.8em"><code>client_id   balance
+client123   50</code></pre>
+                </div>
+                <div>
+                  <strong style="color:#2dd4a0">50 requêtes simultanées</strong>
+                  <pre style="margin-top:.3em;font-size:.8em"><code>UPDATE credit_account
+  SET balance = balance - 10
+  WHERE client_id = ? AND balance >= 10
+
+req 1 → 50 ≥ 10 → balance = 40 ✓
+req 2 → 40 ≥ 10 → balance = 30 ✓
+req 3 → 30 ≥ 10 → balance = 20 ✓
+req 4 → 20 ≥ 10 → balance = 10 ✓
+req 5 → 10 ≥ 10 → balance =  0 ✓
+req 6 →  0 < 10 → 0 ligne   → 402
+...
+req 50 → 402</code></pre>
+                  <div style="margin-top:.3em;font-size:.8em;color:#94a3b8">Atomique nativement — pas de Redis.</div>
+                </div>
+              </div>
+            </div>
+            <div class="card" style="grid-column:1/-1">
+              <div class="card-title">Historique credit_history — audit complet par appel</div>
+              <div class="card-sub">
+                <pre style="margin-top:.3em;font-size:.8em"><code>type          amount  balance_after  route_path                    created_at
+──────────────────────────────────────────────────────────────────────────────────────
+monthly_grant  +1000   1000          —                             2026-06-01 00:00
+consumption      -10    990          /api/v1/maps/:id/areas/locate 2026-06-15 10:00
+consumption      -10    980          /api/v1/maps/:id/areas/locate 2026-06-15 10:01
+consumption      -10    970          /api/v1/maps/:id/areas/locate 2026-06-15 10:02
+...
+consumption      -10     10          /api/v1/maps/:id/areas/locate 2026-06-15 14:30
+consumption      -10      0          /api/v1/maps/:id/areas/locate 2026-06-15 14:31
+→ solde 0 → 402 sur les appels suivants</code></pre>
+                <div style="margin-top:.3em;font-size:.8em;color:#94a3b8">Audit complet par appel — permet de contester ligne par ligne. DailyStat ne conserve qu'un agrégat journalier.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- COMMUN AUX DEUX APPROCHES -->
+      <div>
+        <div style="padding:.4em .8em;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:6px 6px 0 0;font-size:.6em;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8">
+          Commun aux deux approches
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5em;padding:.5em;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-top:none;border-radius:0 0 6px 6px">
+
+
+          <div style="font-size:.65em;color:#e2e8f0;padding:.3em .5em">
+            <strong style="color:#fff">@CreditCost(n)</strong> — même décorateur dans les deux approches. <span class="ic">@CreditCost(10)</span> géocodage, <span class="ic">@CreditCost(2)</span> isochrone. Absent → gratuit.
+          </div>
+          <div style="font-size:.65em;color:#e2e8f0;padding:.3em .5em">
+            <strong style="color:#fff">Subscription — limite</strong><br>
+            <span class="ic">additionalApiCreditsManual</span> + <span class="ic">additionalApiCreditsStripe</span> + <span class="ic">apiCreditsPerProduct</span>.
+          </div>
+
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- DECORATEURS -->
+    <div id="p3-decorators" class="tab-panel">
+      <div class="cols">
+        <div class="card">
+          <div class="card-title">@CreditCost(n, options?)</div>
+          <div class="card-sub">
+            Pose le coût en crédits d'une route externe via <span class="ic">SetMetadata</span> — aucune logique propre.<br><br>
+            <span class="ic">@CreditCost(2)</span> — géocodage, données catalogue<br>
+            <span class="ic">@CreditCost(10)</span> — calculs coûteux (isochrone)<br>
+            <span class="ic">@CreditCost(10, { domain: 'geocode' })</span> — coût + tag catégorie pour l'analytics<br>
+            Absent → no-op, la route n'est jamais débitée<br><br>
+            Se pose toujours au niveau <strong>méthode</strong> — le coût varie par endpoint.
+          </div>
+          <pre style="margin-top:.4em"><code class="language-typescript">@Get('geocode')
+@CreditCost(10, { domain: 'geocode' })
+@ApiVersion({ version: '1', introducedAt: '2026-06-19' })
+async geocode(@Query() q: GeocodeQueryDto) {
+  return this.geocodeService.search(q);
+}</code></pre>
+        </div>
+        <div class="card">
+          <div class="card-title">Comportement selon la valeur</div>
+          <div class="card-sub" style="margin-bottom:.5em">
+            <table class="scope-table" style="font-size:.85em">
+              <tr><th>Décorateur</th><th>Comportement</th></tr>
+              <tr><td><span class="ic">Absent</span></td><td>No-op — route jamais débitée (API interne)</td></tr>
+              <tr><td><span class="ic">@CreditCost(n)</span></td><td>Vérifie used + n ≤ limit → débite (moment exact à trancher, voir Questions) → continue<br>Sinon → 402 Payment Required</td></tr>
+              <tr><td><span class="ic">{ domain }</span> optionnel</td><td>En plus du débit, +1 sur un compteur <span class="ic">api_requests:&lt;domain&gt;</span> séparé — analytics uniquement, jamais sommé dans le plafond</td></tr>
+            </table>
+          </div>
+          <div style="margin-top:.4em;padding:.35em .8em;background:rgba(255,255,255,.04);border-radius:6px;font-size:.65em;color:#94a3b8">
+            <strong style="color:#e2e8f0">Routes de consultation (<span class="ic">/usage</span>)</strong><br>
+            Pas de <span class="ic">@CreditCost</span> — elles ne sont pas débitées. <span class="ic">CreditGuard</span> passe en no-op sur l'absence du décorateur.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CODE -->
+    <div id="p3-code" class="tab-panel">
+      <pre><code class="language-typescript">// CreditGuard — compteur Redis atomique + flush async vers DailyStat
+// Voir onglet ⚠️ Atomicité pour le détail du problème et de la solution
+@Injectable()
+export class CreditGuard implements CanActivate {
+  async canActivate(ctx: ExecutionContext): Promise&lt;boolean&gt; {
+    const { cost, domain } = this.reflector.getAllAndOverride&lt;CreditCostMeta&gt;(
+      CREDIT_COST_KEY, [ctx.getHandler(), ctx.getClass()]
+    ) ?? {};
+    if (cost === undefined) return true; // no-op — route interne ou non taguée
+
+    const request = ctx.switchToHttp().getRequest();
+    const clientId = request.user.id;
+    const apiKeyId = request.apiKey.id;
+    const today = new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'
+    const redisKey = `api:credits:${clientId}:${today}`;
+
+    const limit = await this.clientsService.getApiCreditsLimit(clientId);
+
+    // INCRBY atomique — Redis garantit qu'aucune race condition n'est possible
+    const newValue = await this.redis.incrby(redisKey, cost);
+    await this.redis.expire(redisKey, 60 * 60 * 48); // TTL 48h
+
+    if (newValue &gt; limit) {
+      await this.redis.decrby(redisKey, cost); // rollback atomique
+      throw new HttpException(
+        { errorKey: 'api_credits_exhausted', required: cost, balance: limit - (newValue - cost) },
+        HttpStatus.PAYMENT_REQUIRED,
+      );
+    }
+
+    // Flush asynchrone vers DailyStat — historique long terme, non bloquant
+    this.dailyStatsService
+      .increment(API_CREDIT_USAGE_PRODUCT, clientId, apiKeyId, cost)
+      .catch(err =&gt; this.logger.error('DailyStat flush failed', err));
+
+    // Comptage par catégorie — analytics uniquement, n'affecte jamais le plafond
+    if (domain) {
+      this.dailyStatsService
+        .increment(`${API_REQUEST_COUNT_PREFIX}${domain}`, clientId, apiKeyId, 1)
+        .catch(err =&gt; this.logger.error('DailyStat category flush failed', err));
+    }
+
+    return true;
+  }
+}
+
+// Route payante avec tag catégorie pour analytics
+@Get('geocode')
+@CreditCost(10, { domain: 'geocode' })
+async geocode() { ... }
+
+// Route de consultation — pas de @CreditCost, jamais débitée
+@Get('usage')
+async getUsage() { ... }</code></pre>
+    </div>
+    <div id="p3-endpoints" class="tab-panel">
+      <div class="cols">
+        <div class="card">
+          <div class="card-title">GET /api/v1/usage</div>
+          <div class="card-sub">
+            Retourne le solde et la consommation du cycle en cours.<br><br>
+            <span class="ic">@PublicExternalRoute({ authType: 'api-key', scope: 'usage:read' })</span><br>
+            Pas de <span class="ic">@CreditCost</span> — consultation gratuite<br><br>
+          </div>
+          <pre style="margin-top:.3em"><code class="language-json">{
+  "balance": 8420,
+  "monthlyLimit": 10000,
+  "consumed": 1580,
+  "resetAt": "2026-07-01T00:00:00Z"
+}</code></pre>
+        </div>
+        <div class="card">
+          <div class="card-title">GET /api/v1/usage/history</div>
+          <div class="card-sub">
+            Historique agrégé <strong>par jour</strong> (pas par appel) — avec répartition <strong>par clé</strong> (<span class="ic">domain</span> = id de la clé) et, si renseigné, <strong>par catégorie</strong> (<span class="ic">api_requests:&lt;domain&gt;</span>).<br><br>
+            <span class="ic">@PublicExternalRoute({ authType: 'api-key', scope: 'usage:read' })</span><br>
+            Pas de <span class="ic">@CreditCost</span> — consultation gratuite<br><br>
+            Query params : <span class="ic">?from=</span> <span class="ic">&amp;to=</span> <span class="ic">&amp;page=</span>
+          </div>
+          <pre style="margin-top:.3em"><code class="language-json">{
+  "data": [
+    { "date": "2026-06-22", "consumed": 42,
+      "byKey": [{ "apiKeyId": "...", "name": "Script nuit", "consumed": 42 }],
+      "byCategory": [{ "domain": "geocode", "requests": 18 },
+                      { "domain": "isochrone", "requests": 2 }] },
+    { "date": "2026-06-21", "consumed": 130 }
+  ],
+  "total": 18, "page": 1
+}</code></pre>
+        </div>
+      </div>
+      <div style="margin-top:.4em;padding:.35em .8em;background:rgba(255,255,255,.04);border-radius:6px;font-size:.62em;color:#94a3b8">
+        Ces deux routes vivent dans <span class="ic">src/api/v1/usage/usage.controller.ts</span>. Toute future route métier payante (geocode, isochrone…) porte simplement <span class="ic">@CreditCost(n)</span> — pas de nouvel endpoint dédié, le mécanisme s'applique route par route. La répartition par clé/catégorie ne nécessite aucune nouvelle table : voir l'onglet Base de données.
+      </div>
+    </div>
+
+    <!-- DB -->
+    <div id="p3-questions" class="tab-panel">
+      <div style="font-size:.62em;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#f59e0b;margin-bottom:.3em">En attente côté produit</div>
+      <div style="display:flex;flex-direction:column;gap:.4em;margin-bottom:.7em">
+        <div class="card" style="border-color:rgba(245,158,11,.3)">
+          <div class="card-title" style="color:#f59e0b">Montants d'allocation par plan</div>
+          <div class="card-sub"><span class="ic">apiCreditsPerProduct</span> — actuellement tout à 0. À définir avec l'équipe produit avant la mise en production.</div>
+        </div>
+        <div class="card" style="border-color:rgba(245,158,11,.3)">
+          <div class="card-title" style="color:#f59e0b">Seuils d'alerte et notifications email</div>
+          <div class="card-sub">À quel pourcentage envoyer une alerte <span class="ic">credits.warning</span> ? Quel message pour <span class="ic">credits.exhausted</span> ?</div>
+        </div>
+        <div class="card" style="border-color:rgba(248,113,113,.4)">
+          <div class="card-title" style="color:#f87171">Quand débiter les crédits ? <span style="font-size:.75em;font-weight:400;color:#f87171">bloquant</span></div>
+          <div class="card-sub">
+            <strong style="color:#fff">Option A — débit avant le handler</strong><br>
+            Simple. Si le handler échoue (500, timeout), le client est facturé pour un appel raté.<br><br>
+            <strong style="color:#fff">Option B — débit avant + remboursement sur échec</strong><br>
+            Plus juste, mais <span class="ic">increment</span> négatif sur <span class="ic">DailyStat</span> — risque de <span class="ic">counter</span> négatif si double remboursement. Fragile sans contrainte <span class="ic">CHECK</span>.<br><br>
+            <strong style="color:#fff">Option C — vérification avant, débit après sur succès uniquement</strong><br>
+            Pas de débit sur échec, pas de remboursement. Vérification et débit non atomiques — à gérer avec <span class="ic">UPDATE WHERE used + cost &lt;= limit</span> au moment du débit. Compatible <span class="ic">DailyStat</span>.
+          </div>
+        </div>
+        <div class="card" style="border-color:rgba(245,158,11,.3)">
+          <div class="card-title" style="color:#f59e0b">Report des crédits non utilisés ?</div>
+          <div class="card-sub">Comportement par défaut : use-it-or-lose-it. Le report au mois suivant est une décision produit.</div>
+        </div>
+        <div class="card" style="border-color:rgba(248,113,113,.4)">
+          <div class="card-title" style="color:#f87171">Quel historique dans <span class="ic">/usage/history</span> ? <span style="font-size:.75em;font-weight:400;color:#f87171">bloquant</span></div>
+          <div class="card-sub">
+            L'implémentation de <span class="ic">DailyStat</span> dépend directement de ce choix — à trancher avant de coder.<br><br>
+            <strong style="color:#fff">Par client</strong> — total journalier toutes clés confondues. Simple, une ligne par jour. <span class="ic">domain</span> = constante fixe.<br><br>
+            <strong style="color:#fff">Par clé</strong> — répartition par clé API. Permet d'identifier une clé compromise ou sur-consommatrice. <span class="ic">domain</span> = <span class="ic">apiKey.id</span>.<br><br>
+            <strong style="color:#fff">Par feature</strong> — répartition par route (<span class="ic">geocoding</span>, <span class="ic">isochrone</span>…). Utile pour comprendre les usages. <span class="ic">domain</span> = nom de la feature.<br><br>
+            <strong style="color:#fff">Croisé clé × feature</strong> — "quelle clé a fait combien d'isochroness". Piste explorée : pas besoin de colonne supplémentaire ni de table dédiée — <span class="ic">domain = apiKey.id</span> pour le plafond, plus un second tag <span class="ic">product = 'api_requests:&lt;feature&gt;'</span> pour le comptage par catégorie, dans les deux cas avec la contrainte unique <span class="ic">DailyStat</span> existante. <span style="color:#f59e0b">À valider</span> — implique deux écritures par appel taggé plutôt qu'une, et un choix de convention de nommage pour les valeurs de <span class="ic">product</span>.<br><br>
+            <span style="color:#94a3b8">Les quatre options semblent implémentables sans modifier <span class="ic">DailyStat</span> ni migration — reste à confirmer que ça tient à l'usage avant de verrouiller le choix.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+  </div>
+</section>
+
+
+<!-- POINT 4 -->
+<section>
+  <h3>Point 4</h3>
+  <h2>Versioning <span class="badge badge-purple">Cycle de vie</span></h2>
+  <div class="tab-wrap">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="p4-standards">Standards</button>
+     <button class="tab-btn" data-tab="p4-comparatif">URI vs Header</button>
+      <button class="tab-btn" data-tab="p4-decorators">Décorateurs</button>
+      
+      <button class="tab-btn" data-tab="p4-questions">Questions</button>
+    </div>
+    <div id="p4-standards" class="tab-panel active">
+      <div class="cols">
+
+        <div class="card" style="border-color:rgba(45,212,160,.3)">
+          <div class="card-title" style="color:var(--c-teal)">URL Versioning — standard majoritaire </div>
+          <div class="card-sub">
+            La version est dans l'URL. Simple, explicite, testable directement dans un navigateur.<br><br>
+            <span class="ic">GET /v1/users</span> → <span class="ic">GET /v2/users</span><br><br>
+            Utilisé par GitHub, OpenAI, Twilio. <strong style="color:#fff">NestJS le supporte nativement</strong> via <span class="ic">enableVersioning()</span>.<br><br>
+            <span style="color:#94a3b8">Stripe est souvent cité comme exemple mais c'est un hybride : <span class="ic">/v1/</span> dans l'URL (inchangé depuis 2011) + header <span class="ic">Stripe-Version: 2026-06-24</span> pour l'évolution fine. Le système de transformation à la volée (Abstractors) derrière est extrêmement complexe — hors scope.</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Header Versioning — puristes REST</div>
+          <div class="card-sub">
+            L'URL représente une ressource, pas une version. La version passe dans un header.<br><br>
+            <span class="ic">Accept: application/vnd.smappen.v2+json</span><br>
+            ou <span class="ic">X-API-Version: 2</span><br><br>
+            Utilisé par Microsoft, certaines APIs GitHub.<br><br>
+            <strong style="color:#f87171">Problème DX</strong> — impossible de tester dans un navigateur, les logs ne montrent pas la version, le cache CDN nécessite <span class="ic">Vary</span>.
+          </div>
+        </div>
+
+        <div class="card" style="border-color:rgba(45,212,160,.3)">
+          <div class="card-title" style="color:var(--c-teal)">Règle 1 — ne versionner que les breaking changes ✓</div>
+          <div class="card-sub">
+            Ajouter un champ optionnel → pas de nouveau version.<br>
+            Supprimer un champ, changer son type, modifier la logique → nouvelle version.<br><br>
+            <span style="color:#94a3b8">Uniquement le majeur : <span class="ic">v1</span>, <span class="ic">v2</span>. Jamais <span class="ic">v1.2.3</span> dans une URL d'API.</span>
+          </div>
+        </div>
+
+        <div class="card" style="border-color:rgba(45,212,160,.3)">
+          <div class="card-title" >Règle 2 — politique de dépréciation </div>
+          <div class="card-sub">
+            Deux headers complémentaires sur chaque réponse de la version dépréciée :<br><br>
+            <span class="ic">Deprecation: Thu, 19 Jun 2026 00:00:00 GMT</span> — <span style="color:#94a3b8">début de la période de dépréciation</span><br>
+            <span class="ic">Sunset: Wed, 11 Nov 2027 00:00:00 GMT</span> — <span style="color:#94a3b8">fin : date à laquelle la ressource devient indisponible</span><br>
+            <span class="ic">Link: &lt;https://docs.smappen.com/migration/v2&gt;; rel="successor-version"</span><br><br>
+            Le client lit : "dépréciée depuis le 19 juin 2026, retirée le 11 nov 2027". Géré automatiquement par <span class="ic">ApiVersionSunsetGuard</span> — pose les headers sur les routes dépréciées et bloque avec 410 sur les routes <span class="ic">retired: true</span>. (RFC 8594 + IETF draft deprecation-header).<br/>
+	   <strong style="color:#fff">En pratique, les headers sont rarement lus...</strong>
+          </div>
+        </div>
+
+        <div class="card" style="border-color:rgba(45,212,160,.3)">
+          <div class="card-title" style="color:var(--c-teal)">Règle 3 — version globale de toute l'API ✓</div>
+          <div class="card-sub">
+            Quand un breaking change a lieu, on bump <strong>toute l'API</strong> : <span class="ic">/v1</span> → <span class="ic">/v2</span>. Les endpoints inchangés restent disponibles en <span class="ic">/v2</span> via des alias — le client n'a qu'une seule variable de version à gérer.<br><br>
+            <span class="ic">GET /v1/*</span> → toute la v1 dépréciée, headers <span class="ic">Sunset</span> posés auto sur chaque réponse<br>
+            <span class="ic">GET /v2/*</span> → nouvelle version globale — certains endpoints ont changé, les autres ont le même comportement<br><br>
+            Le client migre en changeant une seule variable : <span class="ic">v1</span> → <span class="ic">v2</span> dans sa base URL.<br><br>
+            <span style="color:#94a3b8">Standard de fait : Stripe, GitHub, OpenAI, Twilio. Une seule version à documenter à la fois.</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <div id="p4-decorators" class="tab-panel">
+      <div class="cols">
+        <div class="card">
+          <div class="card-title">@ApiVersion</div>
+          <div class="card-sub">
+            Marque un endpoint comme <strong>actif</strong> — première version ou nouvelle version après une rupture.<br><br>
+            <span class="ic">version</span> — numéro de version (<span class="ic">'1'</span>, <span class="ic">'2'</span>...)<br>
+            <span class="ic">introducedAt</span> — date de mise en service (documentation)<br><br>
+            Se pose au niveau <strong>méthode</strong>. Hérite de la version du controller si absent.
+          </div>
+          <pre style="margin-top:.4em"><code class="language-typescript">@Get()
+@ApiVersion({ version: '1', introducedAt: '2026-06-19' })
+listMaps() { ... }</code></pre>
+        </div>
+        <div class="card">
+          <div class="card-title">@ApiDeprecated</div>
+          <div class="card-sub">
+            Marque un endpoint comme <strong>déprécié</strong> — son successeur existe, une date de retrait est annoncée. Pose automatiquement les headers <span class="ic">Deprecation</span> et <span class="ic">Sunset</span> sur chaque réponse.<br><br>
+            <span class="ic">sunsetAt</span> — date de retrait prévue<br>
+            <span class="ic">reason</span> — explication du changement<br>
+            <span class="ic">migrationUrl</span> — lien vers la doc de migration<br>
+            <span class="ic">retired: true</span> — endpoint <strong>retiré</strong>, bloque avec <span class="ic">410 Gone</span>
+          </div>
+          <pre style="margin-top:.4em"><code class="language-typescript">// Déprécié — headers auto sur chaque réponse
+@ApiDeprecated({
+  version: '1',
+  sunsetAt: '2027-01-01',
+  reason: 'duration_s → durationSeconds',
+  migrationUrl: 'https://docs.smappen.com/v2',
+})
+listMapsV1() { ... }
+
+// Retiré — 410 Gone, une seule ligne change
+@ApiDeprecated({ ..., retired: true })</code></pre>
+        </div>
+      </div>
+      <div style="margin-top:.4em;padding:.35em .8em;background:rgba(255,255,255,.04);border-radius:6px;font-size:.65em;color:#94a3b8">
+        <strong style="color:#e2e8f0">Niveau d'application</strong> — les deux décorateurs se posent au niveau <strong>méthode</strong>. Le cycle de vie complet est <span style="color:#2dd4a0">@ApiVersion</span> → <span style="color:#f59e0b">@ApiDeprecated</span> → <span style="color:#f87171">@ApiDeprecated({ retired:true })</span> — seule la métadonnée change, le code métier reste intact tout au long.
+      </div>
+      <div style="margin-top:.4em;padding:.35em .8em;background:rgba(96,165,250,.08);border-left:3px solid var(--c-blue);border-radius:0 6px 6px 0;font-size:.65em;color:#94a3b8">
+        <strong style="color:#60a5fa">Lien avec Swagger</strong> — ces décorateurs alimentent automatiquement la documentation OpenAPI :<br>
+        <span class="ic">@ApiVersion</span> → endpoint visible dans le Swagger de sa version (<span class="ic">/api/v1/docs</span>)<br>
+        <span class="ic">@ApiDeprecated</span> → endpoint barré dans Swagger UI (<span class="ic">deprecated: true</span> dans le JSON OpenAPI) + champ vendor <span class="ic">x-api-version-info</span> avec <span class="ic">sunsetAt</span>, <span class="ic">reason</span>, <span class="ic">migrationUrl</span> exploitables par un script CI<br>
+        <span class="ic">@ApiDeprecated({ retired:true })</span> → endpoint masqué du Swagger (plus de route active à documenter)
+      </div>
+    </div>
+    <div id="p4-comparatif" class="tab-panel">
+      <div style="font-size:.65em;color:#f59e0b;margin-bottom:.5em;padding:.35em .8em;background:rgba(245,158,11,.1);border-left:3px solid #f59e0b;border-radius:0 5px 5px 0">
+        <strong>À trancher</strong> — le type de versioning n'est pas encore arrêté. Ce comparatif est là pour alimenter la décision.
+      </div>
+      <div class="cols">
+
+        <!-- URI versioning -->
+        <div class="card">
+          <div class="card-title" style="color:var(--c-teal)">URI versioning</div>
+          <pre style="margin:.4em 0"><code class="language-http">GET /api/v1/geocode
+GET /api/v2/isochrone</code></pre>
+          <div style="display:flex;flex-direction:column;gap:.25em;margin:.4em 0">
+            <div style="font-size:.65em;color:#2dd4a0">✓ Visible dans les logs sans config</div>
+            <div style="font-size:.65em;color:#2dd4a0">✓ Testable curl / navigateur directement</div>
+            <div style="font-size:.65em;color:#2dd4a0">✓ 404 explicite si version inexistante — contrat clair</div>
+            <div style="font-size:.65em;color:#2dd4a0">✓ Chaque ressource évolue indépendamment</div>
+            <div style="font-size:.65em;color:#2dd4a0">✓ Swagger : une seule config suffit</div>
+            <div style="font-size:.65em;color:#f87171;margin-top:.2em">− Client doit connaître la version exacte disponible</div>
+            <div style="font-size:.65em;color:#f87171">− Change sa base URL à chaque migration</div>
+            <div style="font-size:.65em;color:#f87171">− URLs "moins propres" pour les puristes REST</div>
+          </div>
+          <div style="margin-top:.4em;padding:.4em .6em;background:rgba(45,212,160,.08);border-radius:5px;font-size:.62em;color:#94a3b8">
+            <strong style="color:#e2e8f0">Pas de fallback</strong> — <span class="ic">/v2/geocode</span> → 404 stable et prévisible, jamais la v1 en silence. Si une v2 apparaît plus tard, aucun client n'est surpris.
+          </div>
+        </div>
+
+        <!-- Header versioning -->
+        <div class="card" style="border-color:rgba(148,163,184,.2)">
+          <div class="card-title" style="color:#94a3b8">Header versioning</div>
+          <pre style="margin:.4em 0"><code class="language-http">X-API-Version: 2</code></pre>
+          <div style="display:flex;flex-direction:column;gap:.25em;margin:.4em 0">
+            <div style="font-size:.65em;color:#2dd4a0">✓ URLs stables — la ressource ne change pas</div>
+            <div style="font-size:.65em;color:#2dd4a0">✓ Client ne change pas sa base URL</div>
+            <div style="font-size:.65em;color:#2dd4a0">✓ Sémantique HTTP stricte respectée</div>
+            <div style="font-size:.65em;color:#2dd4a0">✓ Granularité possible par requête individuelle</div>
+            <div style="font-size:.65em;color:#f87171;margin-top:.2em">− Invisible dans les logs sans enrichissement</div>
+            <div style="font-size:.65em;color:#f87171">− Non testable dans un navigateur</div>
+            <div style="font-size:.65em;color:#f87171">− Routing Traefik plus complexe</div>
+            <div style="font-size:.65em;color:#f87171">− Clients oublient souvent d'inclure le header</div>
+          </div>
+          <div style="margin-top:.4em;padding:.4em .6em;background:rgba(148,163,184,.06);border-radius:5px;font-size:.62em;color:#94a3b8">
+            Utilisé par <strong style="color:#e2e8f0">GitHub, Microsoft Azure, Salesforce</strong>.
+          </div>
+          <pre style="margin-top:.4em"><code class="language-typescript">// NestJS — si on avait choisi header
+app.enableVersioning({
+  type: VersioningType.HEADER,
+  header: 'X-API-Version'
+});</code></pre>
+        </div>
+
+      </div>
+    </div>
+    <div id="p4-questions" class="tab-panel">
+      <div style="font-size:.62em;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#f87171;margin-bottom:.3em">Bloquantes — à trancher avant de commencer</div>
+      <div style="display:flex;flex-direction:column;gap:.4em;margin-bottom:.7em">
+        <div class="card" style="border-color:rgba(248,113,113,.4)">
+          <div class="card-title" style="color:#f87171">URI versioning ou Header versioning ?</div>
+          <div class="card-sub">URL versioning (<span class="ic">/v1/</span>, <span class="ic">/v2/</span>) retenu dans les Standards — à confirmer en équipe avant de coder.</div>
+        </div>
+      </div>
+      <div style="font-size:.62em;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#f59e0b;margin-bottom:.3em">Importantes — à définir </div>
+      <div style="display:flex;flex-direction:column;gap:.4em">
+        <div class="card" style="border-color:rgba(245,158,11,.25)">
+          <div class="card-title" style="color:#f59e0b">Délai minimum dépréciation → retrait</div>
+          <div class="card-sub">6 mois ? 1 an ? Le délai conditionne les engagements SLA envers les clients.</div>
+        </div>
+        <div class="card" style="border-color:rgba(245,158,11,.25)">
+          <div class="card-title" style="color:#f59e0b">Comment prévenir les clients ?</div>
+          <div class="card-sub">Header <span class="ic">Sunset</span> seul (automatique), ou aussi email / notification dashboard à chaque dépréciation ?</div>
+        </div>
+        <div class="card" style="border-color:rgba(245,158,11,.25)">
+          <div class="card-title" style="color:#f59e0b">Changelog public ?</div>
+          <div class="card-sub">Page publique listant les changements par version — attendu par les clients professionnels.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POINT 5 -->
+<section>
+  <h3>Point 5</h3>
+  <h2>Scopes <span class="badge badge-blue">Permissions</span></h2>
+  <div class="tab-wrap">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="p5-standards">Standards</button>
+      <button class="tab-btn" data-tab="p5-concept">Concept</button>
+      <!-- <button class="tab-btn" data-tab="p5-matrix">Matrice des scopes</button> -->
+      <button class="tab-btn" data-tab="p5-questions">Questions</button>
+    </div>
+     <div id="p5-standards" class="tab-panel active">
+      <div class="cols">
+      
+        <div class="card" >
+          <div class="card-title" >
+            <span>Principe du Moindre Privilège</span>
+            <span class="ic">Standard OAuth2 ∩ ABAC</span>
+          </div>
+  
+          <div class="card-sub" style="margin-bottom: 20px;">
+            Une clé d'API ne peut <strong>jamais</strong> accorder plus de droits que ce que le compte possède déjà. 
+            Les sessions JWT passent toujours — les scopes ne restreignent que les clés API.
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; margin-top: 15px;">
+            
+            <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+              <div style="color: var(--c-purple); font-weight: 600; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px;">
+                🛡️ Le Scope (La Clé API)
+              </div>
+              <div style="font-size: 0.7em; color: var(--c-muted); line-height: 1.4;">
+                <strong>Le Consentement (Forme) :</strong> Détermine les capacités techniques de la clé (ex: <code style="color: var(--c-teal)">maps:read</code>). Configuré et bridé par le client pour limiter l'impact en cas de fuite.
+              </div>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+              <div style="color: var(--c-teal); font-weight: 600; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px;">
+                🗄️ CASL (L'Identité)
+              </div>
+              <div style="font-size: 0.7em; color: var(--c-muted); line-height: 1.4;">
+                <strong>L'Habilitation (Fond) :</strong> Détermine l'ownership des données réelles de l'entreprise (ex: ID client). Géré par Smappen pour garantir l'étanchéité absolue de la DB.
+              </div>
+            </div>
+
+          </div>
+
+          <div style="margin-top: 20px; padding: 10px; background: rgba(124, 111, 247, 0.05); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.65em; color: var(--c-text); border: 1px dashed rgba(124, 111, 247, 0.3);">
+            Droits Finaux = Droits du Compte (CASL) <span style="color: var(--c-purple); font-weight: bold;">∩</span> Droits de la Clé (Scope)
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">La Syntaxe Standard : La notation <span class="ic">ressource:action</span></div>
+          <div class="card-sub"><span class="ic">maps:read</span> -> Autorise uniquement la lecture ou le listing des cartes.<br/>
+            <span class="ic">isochrones:write</span> -> Autorise uniquement le calcul ou la création d'isochrones.<br/>
+            <span class="ic">billing:read </span>-> Autorise la lecture des factures, mais interdit de modifier les abonnements.</div>
+        </div>
+         <div class="card" >
+          <div class="card-title" >Corps de réponse 403 ✓</div>
+          <div class="card-sub">
+            Format cohérent avec les autres erreurs de l'API :
+          </div>
+          <pre style="margin-top:.3em"><code class="language-json">{
+  "type": "https://api.smappen.com/errors/insufficient-scope",
+  "title": "Forbidden",
+  "status": 403,
+  "detail": "Votre clé d'API ne possède pas les privilèges requis pour cette action.",
+  "required_scope": "maps:write",
+  "provided_scopes": ["maps:read", "usage:read"]
+}</code></pre>
+        </div>
+
+
+      </div>
+    </div>
+    <div id="p5-concept" class="tab-panel">
+      <div class="cols">
+        <div class="card" style="border-color:rgba(45,212,160,.3)">
+          <div class="card-title" style="color:var(--c-teal)">Scope via @PublicExternalRoute()</div>
+          <div class="card-sub">
+            Le scope est passé directement dans <span class="ic">@PublicExternalRoute()</span> — <span class="ic">@RequireScopes</span> est un détail d'implémentation interne, jamais posé directement.<br><br>
+            <span class="ic">@PublicExternalRoute({ authType: 'api-key', scope: 'maps:read' })</span><br>
+            <span class="ic">@PublicExternalRoute({ authType: 'api-key', scope: 'analysis:run' })</span><br>
+            Absent → no-op (API interne jamais affectée)
+          </div>
+        </div>
+        <div class="card" style="border-color:rgba(45,212,160,.3)">
+          <div class="card-title" style="color:var(--c-teal)">Impossible de l'oublier sur un controller externe</div>
+          <div class="card-sub">Puisque le scope est encapsulé dans <span class="ic">@PublicExternalRoute()</span>, et que le garde-fou CI vérifie que tout controller versionné porte ce décorateur, un scope manquant devient une erreur de build — pas un oubli silencieux en prod.</div>
+        </div>
+        <div class="card" style="grid-column:1/-1">
+          <div class="card-title">CASL + Scopes — deux guards séquentiels, pas une intersection</div>
+          <div class="card-sub" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8em">
+            <div>
+              <strong style="color:#60a5fa">ScopeGuard</strong><br>
+              Vérifie que la <strong>clé</strong> a déclaré le scope requis à sa création.<br><br>
+              <span class="ic">maps:read</span> présent → passe<br>
+              <span class="ic">maps:read</span> absent → <span class="ic">403</span> immédiat<br><br>
+              <span style="color:#94a3b8">Ne connaît pas CASL. Ne connaît pas la ressource.</span>
+            </div>
+            <div>
+              <strong style="color:#a99ff5">AuthorizationGuard (CASL)</strong><br>
+              Vérifie que le <strong>compte</strong> peut faire l'action sur la ressource.<br><br>
+              <span class="ic">map.clients.includes(userId)</span> → passe<br>
+              Sinon → <span class="ic">403</span><br><br>
+              <span style="color:#94a3b8">Ne connaît pas les scopes. Charge la vraie entité depuis la DB.</span>
+            </div>
+            <div>
+              <strong style="color:#2dd4a0">Résultat</strong><br>
+              Les deux s'exécutent en série via <span class="ic">@UseGuards()</span>. Si l'un échoue, l'autre n'est pas appelé.<br><br>
+              Scope OK + CASL OK → accès<br>
+              Scope KO → <span class="ic">403</span> (clé insuffisante)<br>
+              Scope OK + CASL KO → <span class="ic">403</span> (ressource non possédée)<br><br>
+              <span style="color:#94a3b8">Pas d'intersection calculée — deux vérifications indépendantes.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="p5-matrix" class="tab-panel">
+      <!-- Explication des deux mécanismes -->
+      <div class="cols" style="margin-bottom:.6em">
+        <div class="card" style="border-color:rgba(96,165,250,.35)">
+          <div class="card-title" style="color:var(--c-blue)">1. ScopeGuard</div>
+          <div class="card-sub">Vérifie que la clé API a le droit d'appeler <strong>cette route</strong>.<br>Ex : la clé porte <span class="ic">maps:read</span> → elle peut appeler <span class="ic">GET /v1/maps</span>.</div>
+        </div>
+        <div class="card" style="border-color:rgba(124,111,247,.35)">
+          <div class="card-title" style="color:var(--c-purple)">2. AuthorizationGuard (CASL)</div>
+          <div class="card-sub">Vérifie que le client est bien <strong>propriétaire</strong> de la ressource demandée.<br>Ex : <span class="ic">map.client.id === userId</span> → la carte appartient bien à ce client.</div>
+        </div>
+        <div class="card" style="border-color:rgba(45,212,160,.35)">
+          <div class="card-title" style="color:var(--c-teal)">Les deux doivent être vrais</div>
+          <div class="card-sub">Avoir le scope ne suffit pas pour accéder à une ressource qui appartient à quelqu'un d'autre. Les deux vérifications s'appliquent en série.<br><br>Certains scopes n'ont <strong>pas</strong> de vérification CASL car la route ne touche pas à une ressource possédée (solde, calcul...).</div>
+        </div>
+      </div>
+      <!-- Matrice -->
+      <table class="scope-table">
+        <tr>
+          <th>Scope</th>
+          <th>Ce que ça permet</th>
+          <th style="color:var(--c-blue)">1. ScopeGuard</th>
+          <th style="color:var(--c-purple)">2. CASL ownership</th>
+        </tr>
+        <tr>
+          <td><span class="ic">api-keys:manage</span></td>
+          <td>Créer, lister, révoquer ses clés</td>
+          <td style="color:#2dd4a0">✓ vérifié</td>
+          <td style="color:#2dd4a0">✓ apiKey.client.id === userId</td>
+        </tr>
+        <tr>
+          <td><span class="ic">usage:read</span></td>
+          <td>Consulter son solde et historique</td>
+          <td style="color:#2dd4a0">✓ vérifié</td>
+          <td style="color:#94a3b8">— pas de propriétaire</td>
+        </tr>
+        <tr>
+          <td><span class="ic">maps:read</span></td>
+          <td>Lire ses cartes</td>
+          <td style="color:#2dd4a0">✓ vérifié</td>
+          <td style="color:#2dd4a0">✓ map.client.id === userId</td>
+        </tr>
+        <tr>
+          <td><span class="ic">datasets:read</span></td>
+          <td>Lire ses datasets</td>
+          <td style="color:#2dd4a0">✓ vérifié</td>
+          <td style="color:#2dd4a0">✓ dataset.client.id === userId</td>
+        </tr>
+        <tr>
+          <td><span class="ic">datasets:write</span></td>
+          <td>Modifier / supprimer ses datasets</td>
+          <td style="color:#2dd4a0">✓ vérifié</td>
+          <td style="color:#2dd4a0">✓ dataset.client.id === userId</td>
+        </tr>
+        <tr>
+          <td><span class="ic">data:read</span></td>
+          <td>Données géo — extractor</td>
+          <td style="color:#2dd4a0">✓ vérifié</td>
+          <td style="color:#94a3b8">— pas de propriétaire (donnée partagée)</td>
+        </tr>
+        <tr>
+          <td><span class="ic">data:export</span></td>
+          <td>Export CSV / XLSX</td>
+          <td style="color:#2dd4a0">✓ vérifié</td>
+          <td style="color:#94a3b8">— pas de propriétaire</td>
+        </tr>
+        <tr>
+          <td><span class="ic">analysis:run</span></td>
+          <td>Calculs isochrone / analyse</td>
+          <td style="color:#2dd4a0">✓ vérifié</td>
+          <td style="color:#94a3b8">— pas de propriétaire (calcul)</td>
+        </tr>
+      </table>
+      <div style="margin-top:.5em;padding:.4em .8em;background:rgba(96,165,250,.08);border-left:3px solid var(--c-blue);border-radius:0 6px 6px 0;font-size:.65em;color:#94a3b8">
+        <strong style="color:#60a5fa">Comment combiner ScopeGuard + AuthorizationGuard CASL</strong><br>
+        Pour une route externe qui touche une ressource possédée (ex : <span class="ic">GET /api/v1/maps/:id</span>), les deux s'appliquent en série — <span class="ic">@RequireScopes</span> au niveau classe (guard global), <span class="ic">@UseGuards(AuthorizationGuard(...))</span> aussi au niveau classe (guard controller, exécuté après les guards globaux), <span class="ic">@Can(Action.Read)</span> au niveau méthode.<br><br>
+        <pre style="margin:.3em 0;font-size:1em"><code class="language-typescript">@Controller({ path: 'maps', version: '1' })
+@Public()
+@RequireAuth('apikey-only')
+@RequireScopes('maps:read')                                         // 1. ScopeGuard — la clé a-t-elle le droit ?
+@UseGuards(AuthorizationGuard(MapsService, MapV2, ['client'], 'mapId'))  // 2. CASL — la carte appartient-elle au client ?
+export class MapsExternalController {
+  @Get(':mapId')
+  @Can(Action.Read)   // action lue par AuthorizationGuard
+  @CreditCost(2)
+  getMap(@Param('mapId') mapId: string) {
+    return this.mapsService.findOne(mapId, ['client']);
+  }
+}</code></pre>
+      </div>
+    </div>
+    <div id="p5-questions" class="tab-panel">
+      <div style="font-size:.62em;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#f87171;margin-bottom:.3em">Bloquantes — à trancher avant de commencer</div>
+      <div style="display:flex;flex-direction:column;gap:.4em;margin-bottom:.7em">
+        <div class="card" style="border-color:rgba(248,113,113,.4)">
+          <div class="card-title" style="color:#f87171">Les scopes sont-ils nécessaires ? CASL ne suffit-il pas ?</div>
+          <div class="card-sub">
+            <strong style="color:#fff">CASL seul</strong> — vérifie ce que le <em>compte</em> peut faire. Une clé compromise donne accès à tout ce que le compte permet. Simple — <span class="ic">ScopeGuard</span> disparaît.<br><br>
+            <strong style="color:#fff">CASL + Scopes</strong> — le client limite volontairement le périmètre d'une clé à la création. Une clé compromise n'expose qu'un sous-ensemble. Modèle Stripe "restricted keys".<br><br>
+            <span style="color:#94a3b8">Les deux sont orthogonaux — CASL vérifie l'ownership, les scopes vérifient le consentement explicite de la clé.</span>
+          </div>
+        </div>
+        <div class="card" style="border-color:rgba(248,113,113,.4)">
+          <div class="card-title" style="color:#f87171">Clé sans scope — accès à tout ou à rien ?</div>
+          <div class="card-sub">
+            <strong style="color:#fff">Whitelist (recommandé)</strong> — une clé sans scope n'accède à rien. Plus sécurisé.<br><br>
+            <strong style="color:#fff">Accès large implicite</strong> — <span class="ic">scope</span> absent → <span class="ic">ScopeGuard</span> no-op → accès à tout.
+          </div>
+        </div>
+        <div class="card" style="border-color:rgba(248,113,113,.4)">
+          <div class="card-title" style="color:#f87171">Scopes wildcard — supportés ou non ?</div>
+          <div class="card-sub">
+            <strong style="color:#fff">Non supporté</strong> — chaque scope déclaré explicitement. Simple.<br><br>
+            <strong style="color:#fff">Wildcard</strong> — <span class="ic">data:*</span> couvre <span class="ic">data:read</span> + <span class="ic">data:export</span>. Nécessite une logique de matching dans <span class="ic">ScopeGuard</span>.
+          </div>
+        </div>
+      </div>
+      <div style="font-size:.62em;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#f59e0b;margin-bottom:.3em">Importantes — à définir avant la mise en production</div>
+      <div style="display:flex;flex-direction:column;gap:.4em">
+        <div class="card" style="border-color:rgba(245,158,11,.25)">
+          <div class="card-title" style="color:#f59e0b">Scope supérieur à ce que le compte permet ?</div>
+          <div class="card-sub">Rejeté à la création ou seulement au moment de l'appel ?</div>
+        </div>
+        <div class="card" style="border-color:rgba(245,158,11,.25)">
+          <div class="card-title" style="color:#f59e0b">Modification des scopes d'une clé existante ?</div>
+          <div class="card-sub">Ou faut-il révoquer et recréer ? Impact sur un éventuel <span class="ic">PATCH /api/v1/api-keys/:id</span>.</div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</section>
+
+<!-- CHAÎNE + CYCLE DE VIE INTERACTIF -->
+<section>
+  <h3>Architecture guards</h3>
+  <h2>Guards — <span style="color:var(--c-purple)">chaîne de traitement des requêtes</span></h2>
+
+  <div class="tab-wrap">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="g-functional">Vue fonctionnelle</button>
+      <button class="tab-btn" data-tab="g-technical">Vue technique</button>
+    </div>
+
+    <div id="g-functional" class="tab-panel active">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1em;margin-top:.3em">
+        <div style="display:flex;flex-direction:column;gap:4px">
+
+          <div style="font-size:.58em;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:2px">Toutes les routes</div>
+
+          <div style="display:flex;align-items:center;gap:.6em;padding:.35em .8em;border-radius:5px;background:rgba(148,163,184,.1);border:1px solid rgba(148,163,184,.2)">
+            <span style="font-size:.7em;font-weight:600;color:#fff;flex:1">Ce JWT est-il valide ?</span>
+            <span style="font-size:.6em;color:#f87171">→ 401</span>
+          </div>
+          <div style="text-align:center;color:#4a4d60;font-size:.55em;line-height:1">↓</div>
+
+          <div style="display:flex;align-items:center;gap:.6em;padding:.35em .8em;border-radius:5px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2)">
+            <span style="font-size:.7em;font-weight:600;color:#fff;flex:1">Trop de requêtes récentes ?</span>
+            <span style="font-size:.6em;color:#f87171">→ 429</span>
+          </div>
+          <div style="text-align:center;color:#4a4d60;font-size:.55em;line-height:1">↓</div>
+
+          <div style="font-size:.58em;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#2dd4a0;margin:4px 0 2px">Routes externes uniquement</div>
+
+          <div style="display:flex;align-items:center;gap:.6em;padding:.35em .8em;border-radius:5px;background:rgba(124,111,247,.15);border:1px solid rgba(124,111,247,.3)">
+            <span style="font-size:.7em;font-weight:600;color:#fff;flex:1">Cet endpoint existe-t-il encore ?</span>
+            <span style="font-size:.6em;color:#f87171">→ 410 Gone</span>
+          </div>
+          <div style="text-align:center;color:#4a4d60;font-size:.55em;line-height:1">↓</div>
+
+          <div style="display:flex;align-items:center;gap:.6em;padding:.35em .8em;border-radius:5px;background:rgba(45,212,160,.1);border:1px solid rgba(45,212,160,.2)">
+            <span style="font-size:.7em;font-weight:600;color:#fff;flex:1">Qui appelle ? (résolution de l'identité)</span>
+            <span style="font-size:.6em;color:#2dd4a0">jamais bloquant</span>
+          </div>
+          <div style="text-align:center;color:#4a4d60;font-size:.55em;line-height:1">↓</div>
+
+          <div style="display:flex;align-items:center;gap:.6em;padding:.35em .8em;border-radius:5px;background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.2)">
+            <span style="font-size:.7em;font-weight:600;color:#fff;flex:1">Cette clé a-t-elle le droit sur cette route ?</span>
+            <span style="font-size:.6em;color:#f87171">→ 403</span>
+          </div>
+          <div style="text-align:center;color:#4a4d60;font-size:.55em;line-height:1">↓</div>
+
+          <div style="font-size:.58em;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#a99ff5;margin:4px 0 2px">Selon le controller (interne et externe)</div>
+
+          <div style="display:flex;align-items:center;gap:.6em;padding:.35em .8em;border-radius:5px;background:rgba(124,111,247,.1);border:1px solid rgba(124,111,247,.2)">
+            <span style="font-size:.7em;font-weight:600;color:#fff;flex:1">Ce compte possède-t-il cette ressource ?</span>
+            <span style="font-size:.6em;color:#f87171">→ 403</span>
+          </div>
+          <div style="text-align:center;color:#4a4d60;font-size:.55em;line-height:1">↓</div>
+
+          <div style="display:flex;align-items:center;gap:.6em;padding:.35em .8em;border-radius:5px;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.2)">
+            <span style="font-size:.7em;font-weight:600;color:#fff;flex:1">A-t-il assez de crédits ? <span style="font-weight:400;color:#94a3b8">(routes externes payantes)</span></span>
+            <span style="font-size:.6em;color:#f87171">→ 402</span>
+          </div>
+          <div style="text-align:center;color:#4a4d60;font-size:.55em;line-height:1">↓</div>
+
+          <div style="display:flex;align-items:center;gap:.6em;padding:.35em .8em;border-radius:5px;background:rgba(134,239,172,.1);border:1px solid rgba(134,239,172,.2)">
+            <span style="font-size:.7em;font-weight:600;color:#86efac;flex:1">Traitement + features plan/compte</span>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:.5em">
+          <div class="card">
+            <div class="card-title">Principe</div>
+            <div class="card-sub">Chaque question est posée dans l'ordre. Dès qu'une réponse est "non", la requête est rejetée avec le code HTTP approprié — le reste de la chaîne n'est jamais exécuté.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Routes internes vs externes</div>
+            <div class="card-sub">Les deux premières questions s'appliquent à <strong>toutes</strong> les routes. Les suivantes ne s'appliquent qu'aux <strong>routes externes versionnées</strong> — activées par <span class="ic">@PublicExternalRoute()</span>.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Features — dans le handler</div>
+            <div class="card-sub">"Ce plan débloque-t-il cette fonctionnalité ?" — vérifié manuellement dans le handler via <span class="ic">accessFeatureService.canAccessFeatures()</span>. Indépendant des guards, cumulé avec l'ownership CASL.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="g-technical" class="tab-panel">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8em;margin-top:.4em">
+
+    <!-- Colonne gauche : guards cliquables -->
+    <div id="guard-chain" style="display:flex;flex-direction:column;gap:3px">
+
+      <div style="font-size:.58em;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:2px;padding-left:4px">Globaux — toutes les routes</div>
+
+      <div class="gi" data-id="g-jwt" style="background:rgba(148,163,184,.1);border:1px solid rgba(148,163,184,.2)">
+        <span class="gnum" style="background:rgba(148,163,184,.2);color:#94a3b8">∅</span>
+        <span class="gtitle">JwtAccessAuthGuard</span>
+        <span class="gsub">ce JWT est-il valide ? <span style="color:#f59e0b">(@IsPublic() + sans JWT → skip)</span></span>
+        <span class="gerr">401</span>
+      </div>
+      <div class="garrow">↓</div>
+
+      <div class="gi" data-id="g-throttle" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2)">
+        <span class="gnum" style="background:rgba(245,158,11,.2);color:#f59e0b">2</span>
+        <span class="gtitle">ThrottlerGuard</span>
+        <span class="gsub">trop de requêtes récentes ? <span style="color:#94a3b8">(déjà global — inchangé)</span></span>
+        <span class="gerr">429</span>
+      </div>
+      <div class="garrow">↓</div>
+
+      <div style="font-size:.58em;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#2dd4a0;margin:4px 0 2px;padding-left:4px">Locaux — routes externes via <code style="font-size:.95em">@PublicExternalRoute()</code></div>
+
+      <div class="gi" data-id="g-sunset" style="background:rgba(124,111,247,.18);border:1px solid rgba(124,111,247,.3)">
+        <span class="gnum" style="background:rgba(124,111,247,.35);color:#a99ff5">4</span>
+        <span class="gtitle">ApiVersionSunsetGuard</span>
+        <span class="gsub">endpoint retiré ?</span>
+        <span class="gerr">410 Gone</span>
+      </div>
+      <div class="garrow">↓</div>
+
+      <div class="gi" data-id="g-identity" style="background:rgba(45,212,160,.1);border:1px solid rgba(45,212,160,.2)">
+        <span class="gnum" style="background:rgba(45,212,160,.2);color:#2dd4a0">1</span>
+        <span class="gtitle">ApiKeyIdentityGuard</span>
+        <span class="gsub">qui es-tu ? <span style="color:#2dd4a0">pose request.apiKey + request.user (jamais bloquant)</span></span>
+      </div>
+      <div class="garrow">↓</div>
+
+      <div class="gi" data-id="g-scope" style="background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.2)">
+        <span class="gnum" style="background:rgba(96,165,250,.2);color:#60a5fa">5</span>
+        <span class="gtitle">ScopeGuard</span>
+        <span class="gsub">cette clé a-t-elle le droit d'appeler cette route ?</span>
+        <span class="gerr">403</span>
+      </div>
+
+      <div class="garrow">↓</div>
+
+      <div style="font-size:.58em;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#a99ff5;margin:4px 0 2px;padding-left:4px">Selon le controller — interne et externe</div>
+
+      <div class="gi" data-id="g-casl" style="background:rgba(124,111,247,.1);border:1px solid rgba(124,111,247,.2)">
+        <span class="gnum" style="background:rgba(124,111,247,.2);color:#a99ff5">∅</span>
+        <span class="gtitle">AuthorizationGuard (CASL)</span>
+        <span class="gsub">ce compte possède-t-il cette ressource ?</span>
+        <span class="gerr">403</span>
+      </div>
+      <div class="garrow">↓</div>
+
+      <div class="gi" data-id="g-credit" style="background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.2);opacity:.7">
+        <span class="gnum" style="background:rgba(248,113,113,.2);color:#f87171">3</span>
+        <span class="gtitle">CreditGuard</span>
+        <span class="gsub">solde suffisant ? <span style="color:#94a3b8">(posé séparément — optionnel)</span></span>
+        <span class="gerr">402</span>
+      </div>
+      <div class="garrow">↓</div>
+
+      <div class="gi" id="g-handler" style="background:rgba(134,239,172,.1);border:1px solid rgba(134,239,172,.2);cursor:default">
+        <span class="gtitle" style="color:#86efac">Handler + CASL (ownership)</span>
+        <span class="gsub">logique métier + ownership CASL</span>
+        <span class="gblock" style="display:none;margin-left:auto;font-size:.6em;color:#f87171">jamais atteint</span>
+      </div>
+    </div>
+
+    <!-- Colonne droite : panneau de détail -->
+    <div id="guard-detail-panel" style="background:#1a1d27;border:1px solid #2a2d3e;border-radius:8px;padding:.7em 1em;font-size:.7em;line-height:1.6;color:#94a3b8;display:flex;align-items:center;justify-content:center;text-align:center">
+      <span style="font-size:1.1em">← Cliquer sur un guard</span>
+    </div>
+
+  </div>
+
+  <!-- Sélecteur de cas d'usage -->
+  <div style="margin-top:.4em;display:flex;gap:1em;font-size:.75em;color:#94a3b8;flex-wrap:wrap">
+    <span style="color:#2dd4a0;font-weight:600">✓ passe</span>
+    <span style="color:#f87171;font-weight:600">✗ bloqué</span>
+    <span style="color:#f59e0b;font-weight:600">→ no-op</span>
+    <span style="color:#4a4d60;font-weight:600">▪ jamais atteint</span>
+  </div>
+  <div style="margin-top:.4em;display:flex;gap:.4em;flex-wrap:wrap">
+    <span style="font-size:.6em;color:#94a3b8;align-self:center;margin-right:.2em">Simuler :</span>
+    <button class="cas-btn active" data-cas="apikey">1. API Key valide</button>
+    <button class="cas-btn" data-cas="jwt">2. JWT interne</button>
+    <button class="cas-btn" data-cas="scope">3. Scope insuffisant</button>
+    <button class="cas-btn" data-cas="sunset">4. Endpoint retiré</button>
+    <button class="cas-btn" data-cas="public">5. Route publique</button>
+    <button class="cas-btn" data-cas="hybrid">6. JWT sur route hybrid</button>
+  </div>
+
+  <style>
+    .gi { display:flex;align-items:center;gap:.5em;padding:.28em .7em;border-radius:5px;cursor:pointer;transition:opacity .15s,transform .12s; }
+    .gi:hover { transform:translateX(3px); }
+    .gi.blocked { opacity:.2; filter: grayscale(.8); }
+    .gi.fail { outline:2px solid #f87171 !important; box-shadow:0 0 8px rgba(248,113,113,.4); }
+    .gi.noop { opacity:.45; filter: grayscale(.6); }
+    .gi.active-guard { outline:2px solid #fff; outline-offset:1px; }
+    .gnum { display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;font-size:.7em;font-weight:700;flex-shrink:0; }
+    .gtitle { font-size:.72em;font-weight:600;color:#fff; }
+    .gsub   { font-size:.6em;color:#94a3b8;margin-left:.2em; }
+    .gerr   { margin-left:auto;font-size:.6em;color:#f87171;white-space:nowrap; }
+    .garrow { text-align:center;color:#4a4d60;font-size:.55em;line-height:1;padding-left:1.2em; }
+    .cas-btn { font-size:.58em;padding:3px 10px;border-radius:12px;border:1px solid #2a2d3e;background:#1a1d27;color:#94a3b8;cursor:pointer;transition:all .15s; }
+    .cas-btn:hover { border-color:#60a5fa;color:#60a5fa; }
+    .cas-btn.active { background:#7c6ff7;border-color:#7c6ff7;color:#fff; }
+  </style>
+
+  <script>
+(function(){
+
+  var DETAILS = {
+    "g-jwt": {
+      title: "JwtAccessAuthGuard", pt: "Existant",
+      dec: "Skip uniquement si <code>@IsPublic()</code> posé <strong>ET</strong> aucun JWT présent. Si un JWT est présent, il est toujours validé. <code>@PublicExternalRoute()</code> pose <code>@IsPublic()</code> en interne.",
+      cases: [
+        ["green","✓","JWT valide (cookie ou bearer) → valide et pose request.user — quelle que soit la route"],
+        ["green","✓","@IsPublic() + aucun JWT présent → skip complet, passe"],
+        ["green","✓","@PublicExternalRoute({ authType: 'hybrid' }) + JWT valide → valide le JWT → request.user posé ✓"],
+        ["green","✓","@PublicExternalRoute({ authType: 'api-key' }) + aucun JWT → skip, ApiKeyIdentityGuard prend le relais"],
+        ["red","✗","Route interne + JWT absent → 401"],
+        ["red","✗","JWT présent mais invalide/périmé + @IsPublic() → 401 (validation quand même) ⚠"]
+      ],
+      noop: "@IsPublic() posé ET aucun JWT dans la requête → skip"
+    },
+    "g-throttle": {
+      title: "ThrottlerGuard", pt: "Pt 2",
+      dec: "Guard <strong>global existant</strong> — déjà en place sur l'application, inchangé. Bucketing : par IP pour les routes anonymes/internes, par clé API (<code>bearer:{prefix}</code>) pour les routes externes — à valider en équipe.",
+      cases: [
+        ["green","✓","Sous le quota → passe, headers X-RateLimit-* ajoutés"],
+        ["red","✗","Quota dépassé → 429 Too Many Requests + Retry-After"],
+        ["gray","→","Route interne JWT → throttlé par IP (comportement existant)"]
+      ],
+      noop: "Quota non atteint → passe"
+    },
+    "g-sunset": {
+      title: "ApiVersionSunsetGuard", pt: "Pt 4",
+      dec: "Guard <strong>local</strong> — injecté par <code>@PublicExternalRoute()</code>. S'applique uniquement aux routes externes versionnées. Jamais présent sur les routes internes <code>VERSION_NEUTRAL</code>.",
+      cases: [
+        ["red","✗","Route marquée retired: true → 410 Gone"],
+        ["amber","⚠","Route dépréciée → Deprecation (début) + Sunset (fin) posés, passe quand même"],
+        ["green","✓","Route active → passe"],
+        ["gray","→","Route sans @ApiVersion → no-op"]
+      ],
+      noop: "Route non marquée retired → passe toujours"
+    },
+    "g-identity": {
+      title: "ApiKeyIdentityGuard", pt: "Pt 1",
+      dec: "Guard <strong>local</strong> — injecté par <code>@PublicExternalRoute()</code> uniquement sur les routes externes. Actif sur toutes les routes <code>@PublicExternalRoute()</code> — <code>authType</code> est toujours <code>'api-key'</code> ou <code>'hybrid'</code>. Jamais présent sur les routes internes.",
+      cases: [
+        ["green","✓","Clé API valide dans Authorization → pose request.apiKey + request.user"],
+        ["gray","→","Authorization absent ou pas une clé → rien posé, passe quand même"],
+        ["gray","→","Clé révoquée ou inconnue → rien posé, passe (AuthorizationGuard bloquera)"]
+      ],
+      noop: "Jamais bloquant — enrichit le request si clé trouvée, passe dans tous les cas"
+    },
+    "g-casl": {
+      title: "AuthorizationGuard (CASL)", pt: "Existant",
+      dec: "Guard de <strong>classe</strong> — déjà en place. Charge le client avec <code>populate: ['personalFeatures', 'subscription']</code> et pose <code>{ id, features, apiCreditsLimit }</code> dans le CLS. <code>CreditGuard</code> lit <code>cls.get('client.apiCreditsLimit')</code> — 0 SELECT supplémentaire.",
+      cases: [
+        ["green","✓","map.clients.includes(userId) → passe"],
+        ["red","✗","Ressource non possédée → 403"],
+        ["gray","→","Route sans :accessId → check générique RBAC"],
+        ["gray","→","Route interne → AuthorizationGuard existant inchangé"]
+      ],
+      noop: "Pas d'entité chargeable → check générique sur la classe"
+    },
+    "g-credit": {
+      title: "CreditGuard", pt: "Pt 3",
+      dec: "Guard <strong>optionnel</strong> — posé séparément via <code>@UseGuards(CreditGuard)</code> après <code>AuthorizationGuard</code>. Lit <code>@CreditCost(n)</code> sur le handler. Lit <code>cls.get('client.apiCreditsLimit')</code> — 0 SELECT sur <code>Subscription</code>. Vérifie le solde via Redis (<code>INCRBY</code> atomique) + DailyStat. Rollback <code>DECRBY</code> si quota dépassé.",
+      cases: [
+        ["gray","→","@CreditCost absent → no-op, route gratuite"],
+        ["green","✓","@CreditCost(n) + solde suffisant → INCRBY Redis → passe"],
+        ["red","✗","@CreditCost(n) + solde insuffisant → DECRBY rollback → 402"]
+      ],
+      noop: "@CreditCost absent → passe sans écriture"
+    },
+    "g-scope": {
+      title: "ScopeGuard", pt: "Pt 5",
+      dec: "Guard <strong>local</strong> — injecté par <code>@PublicExternalRoute()</code>. Jamais présent sur les routes internes. <code>@PublicExternalRoute({ scope: 'maps:read' })</code> pose la métadonnée lue par ce guard.",
+      cases: [
+        ["green","✓","Clé API avec scope requis → passe"],
+        ["red","✗","Clé API sans le scope requis → 403"],
+        ["gray","→","authType: 'hybrid' + JWT → ScopeGuard no-op si scope absent sur la clé JWT"]
+      ],
+      noop: "@PublicExternalRoute() sans scope → no-op"
+    },
+    "g-credit": {
+      title: "CreditGuard", pt: "Pt 3",
+      dec: "Guard <strong>local</strong> — injecté par <code>@PublicExternalRoute()</code>. Lit <code>@CreditCost(n)</code> sur le handler. Vérifie le solde via Redis (<code>INCRBY</code> atomique) + DailyStat (jours passés). Rollback <code>DECRBY</code> si quota dépassé.",
+      cases: [
+        ["gray","→","@CreditCost absent → no-op, route gratuite (API interne, /usage)"],
+        ["green","✓","@CreditCost(n) + solde suffisant → INCRBY Redis → passe"],
+        ["red","✗","@CreditCost(n) + solde insuffisant → DECRBY rollback → 402 Payment Required"]
+      ],
+      noop: "@CreditCost absent → passe sans écriture"
+    }
+  };
+
+  var CAS = {
+    apikey: { label:"API Key valide", handlerReached:true,  colors:{"g-sunset":"pass","g-jwt":"pass","g-identity":"pass","g-scope":"pass","g-throttle":"pass","g-credit":"pass"} },
+    jwt:    { label:"JWT interne (route VERSION_NEUTRAL)", handlerReached:true,  colors:{"g-sunset":"noop","g-jwt":"pass","g-identity":"noop","g-scope":"noop","g-throttle":"pass","g-credit":"noop"} },
+    scope:  { label:"API Key valide mais scope insuffisant", handlerReached:false, colors:{"g-sunset":"pass","g-jwt":"pass","g-identity":"pass","g-scope":"fail","g-throttle":"pass","g-credit":"never"} },
+    sunset: { label:"Endpoint retiré (retired: true)", handlerReached:false, colors:{"g-jwt":"pass","g-throttle":"pass","g-sunset":"fail","g-identity":"never","g-scope":"never","g-throttle":"pass","g-credit":"never", "g-casl": "never"} },
+    public: { label:"Route publique (pas de @PublicExternalRoute)", handlerReached:true, colors:{"g-sunset":"noop","g-jwt":"pass","g-identity":"noop","g-scope":"noop","g-throttle":"pass","g-credit":"noop"} },
+    hybrid: { label:"JWT sur route @PublicExternalRoute({ authType: 'hybrid' })", handlerReached:true, colors:{"g-jwt":"pass","g-throttle":"pass","g-sunset":"pass","g-identity":"noop","g-scope":"pass","g-credit":"pass"} }
+  };
+
+  var colorMap = { pass:"pass", fail:"blocked", noop:"noop", never:"blocked" };
+  var guards = ["g-jwt","g-throttle","g-sunset","g-identity","g-scope","g-casl","g-credit"];
+
+  function applyColors(casKey) {
+    var cas = CAS[casKey];
+    guards.forEach(function(id) {
+      var el = document.querySelector('[data-id="'+id+'"]');
+      if (!el) return;
+      el.classList.remove("blocked","noop","active-guard","fail");
+      var c = cas.colors[id];
+      if (c === "fail") { el.classList.add("fail"); }
+      else if (c === "never") { el.classList.add("blocked"); }
+      else if (c === "noop") { el.classList.add("noop"); }
+    });
+    var handler = document.getElementById("g-handler");
+    if (handler) {
+      handler.classList.remove("blocked");
+      var block = handler.querySelector(".gblock");
+      if (!cas.handlerReached) { handler.classList.add("blocked"); if(block) block.style.display="inline"; }
+      else { if(block) block.style.display="none"; }
+    }
+  }
+
+  function showDetail(id) {
+    var d = DETAILS[id];
+    var panel = document.getElementById("guard-detail-panel");
+    if (!d || !panel) return;
+    var casesHtml = d.cases.map(function(c) {
+      var col = c[0]==="green"?"#2dd4a0":c[0]==="red"?"#f87171":c[0]==="amber"?"#f59e0b":"#94a3b8";
+      return '<div style="margin:.15em 0"><span style="color:'+col+';font-weight:700">'+c[1]+'</span> '+c[2]+'</div>';
+    }).join("");
+    panel.style.textAlign="left";
+    panel.style.display="block";
+    panel.innerHTML = '<div style="font-weight:700;color:#fff;margin-bottom:.3em">'+d.title+' <span style="font-size:.75em;color:#7c6ff7;font-weight:400">'+d.pt+'</span> <span style="font-size:.7em;color:#2dd4a0">✓ passe</span></div>'
+      +'<div style="font-size:.75em;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.15em">Décorateurs</div>'
+      +'<div style="margin-bottom:.5em;color:#e2e8f0">'+d.dec+'</div>'
+      +'<div style="font-size:.75em;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.15em">Cas d\'usage</div>'
+      +casesHtml
+      +'<div style="margin-top:.4em;font-size:.85em;color:#4a4d60">'+d.noop+'</div>';
+  }
+
+  document.querySelectorAll(".gi[data-id]").forEach(function(el) {
+    el.addEventListener("click", function() {
+      document.querySelectorAll(".gi").forEach(function(g){ g.classList.remove("active-guard"); });
+      el.classList.add("active-guard");
+      showDetail(el.getAttribute("data-id"));
+    });
+  });
+
+  document.querySelectorAll(".cas-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      document.querySelectorAll(".cas-btn").forEach(function(b){ b.classList.remove("active"); });
+      btn.classList.add("active");
+      applyColors(btn.getAttribute("data-cas"));
+    });
+  });
+
+  applyColors("apikey");
+
+})();
+  </script>
+    </div>
+
+  </div>
+</section>
+
+<!-- EXEMPLE LEAD ATTRIBUTION -->
+<section>
+  <h3>Exemple concret</h3>
+  <h2>Lead Attribution — <span style="color:var(--c-teal)">premier endpoint public</span></h2>
+  <div class="tab-wrap">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="ex-usecase">Cas d'usage</button>
+      <button class="tab-btn" data-tab="ex-flow">Flux de la requête</button>
+      <button class="tab-btn" data-tab="ex-code">Implémentation</button>
+    </div>
+
+    <!-- CAS D'USAGE -->
+    <div id="ex-usecase" class="tab-panel active">
+      <div class="cols">
+        <div class="card" style="grid-column:1/-1;border-color:rgba(45,212,160,.3)">
+          <div class="card-title" style="color:var(--c-teal)">Besoin</div>
+          <div class="card-sub">
+            Un client Smappen reçoit un nouveau lead, une commande ou une demande. Il a besoin de savoir automatiquement à quelle zone géographique (territoire franchisé, secteur commercial...) ce lead appartient, pour :<br><br>
+
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Endpoint</div>
+          <div class="card-sub">
+            <span class="ic">GET /api/v1/maps/:mapId/areas/locate</span><br><br>
+            Prend une adresse en entrée, géocode en lat/lon, retourne les zones de la map qui contiennent ce point.
+          </div>
+          <pre style="margin-top:.4em"><code class="language-http">GET /api/v1/maps/map_abc123/areas/locate
+Authorization: Bearer sk_live_...
+?address=12+rue+de+la+Paix+75001+Paris
+
+→ 200 OK
+X-Credits-Cost: 2
+X-Credits-Remaining: 8418</code></pre>
+        </div>
+        <div class="card">
+          <div class="card-title">Réponse</div>
+          <div class="card-sub">Retourne les zones qui contiennent l'adresse géocodée.</div>
+          <pre style="margin-top:.4em"><code class="language-json">{
+  "areas": [
+    {
+      "uuid": "zone_xyz789",
+      "label": "Secteur Paris Centre"
+    }
+  ],
+  "geocoded": {
+    "address": "12 rue de la Paix, 75001 Paris",
+    "lat": 48.8694,
+    "lon": 2.3297
+  }
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLUX -->
+    <div id="ex-flow" class="tab-panel">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1em">
+        <div style="display:flex;flex-direction:column;gap:3px;font-size:.7em">
+
+          <div style="padding:.3em .7em;border-radius:4px;background:rgba(148,163,184,.1);border:1px solid rgba(148,163,184,.2);display:flex;justify-content:space-between">
+            <span><strong style="color:#fff">JwtAccessAuthGuard</strong> — @IsPublic() + pas de JWT</span>
+            <span style="color:#2dd4a0">skip ✓</span>
+          </div>
+          <div style="padding:.3em .7em;border-radius:4px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);display:flex;justify-content:space-between">
+            <span><strong style="color:#fff">ThrottlerGuard</strong> — bucket <span class="ic">bearer:sk_live_</span></span>
+            <span style="color:#2dd4a0">✓</span>
+          </div>
+          <div style="padding:.3em .7em;border-radius:4px;background:rgba(124,111,247,.15);border:1px solid rgba(124,111,247,.3);display:flex;justify-content:space-between">
+            <span><strong style="color:#fff">ApiVersionSunsetGuard</strong> — v1 active</span>
+            <span style="color:#2dd4a0">✓</span>
+          </div>
+          <div style="padding:.3em .7em;border-radius:4px;background:rgba(45,212,160,.1);border:1px solid rgba(45,212,160,.2)">
+            <span><strong style="color:#fff">ApiKeyIdentityGuard</strong> — résout <span class="ic">sk_live_...</span></span><br>
+            <span style="color:#94a3b8;font-size:.9em">→ pose <span class="ic">request.user = &#123; id: clientId &#125;</span></span><br>
+            <span style="color:#94a3b8;font-size:.9em">→ pose <span class="ic">cls.set('apiKey', &#123; id, scopes &#125;)</span></span>
+          </div>
+          <div style="padding:.3em .7em;border-radius:4px;background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.2);display:flex;justify-content:space-between">
+            <span><strong style="color:#fff">ScopeGuard</strong> — clé a <span class="ic">areas:read</span></span>
+            <span style="color:#2dd4a0">✓</span>
+          </div>
+          <div style="padding:.3em .7em;border-radius:4px;background:rgba(124,111,247,.1);border:1px solid rgba(124,111,247,.2)">
+            <span><strong style="color:#fff">AuthorizationGuard</strong> — charge <span class="ic">MapV2[:mapId]</span></span><br>
+            <span style="color:#94a3b8;font-size:.9em">→ <span class="ic">map.clients.includes(clientId)</span> → ownership ✓</span><br>
+            <span style="color:#94a3b8;font-size:.9em">→ <span class="ic">cls.set('client', &#123; id, features, apiCreditsLimit &#125;)</span></span>
+          </div>
+          <div style="padding:.3em .7em;border-radius:4px;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.2)">
+            <span><strong style="color:#fff">CreditGuard</strong> — @CreditCost(2)</span><br>
+            <span style="color:#94a3b8;font-size:.9em">→ <span class="ic">limit = cls.get('client.apiCreditsLimit')</span> — 0 SELECT</span><br>
+            <span style="color:#94a3b8;font-size:.9em">→ <span class="ic">INCRBY api:credits:clientId:date 2</span> → passe ✓</span>
+          </div>
+          <div style="padding:.3em .7em;border-radius:4px;background:rgba(134,239,172,.1);border:1px solid rgba(134,239,172,.2)">
+            <span style="color:#86efac"><strong>Handler locate()</strong></span><br>
+            <span style="color:#94a3b8;font-size:.9em">→ géocode adresse → lat/lon</span><br>
+            <span style="color:#94a3b8;font-size:.9em">→ <span class="ic">ST_Contains(geometry, ST_Point(lon, lat))</span> → retourne zones ✓</span>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:.5em">
+          <div class="card">
+            <div class="card-title">Requêtes DB</div>
+            <div class="card-sub">
+              <strong>1.</strong> <span class="ic">api_key</span> — lookup par prefix + hash (ApiKeyIdentityGuard)<br>
+              <strong>2.</strong> <span class="ic">client</span> + <span class="ic">subscription</span> — populate (AuthorizationGuard)<br>
+              <strong>3.</strong> <span class="ic">map_v2</span> + <span class="ic">clients</span> — ownership check (AuthorizationGuard)<br>
+              <strong>4.</strong> <span class="ic">area</span> — filtre spatial PostGIS <span class="ic">ST_Contains</span> (Handler)<br><br>
+              + <span class="ic">INCRBY</span> Redis (CreditGuard) + écriture DailyStat en arrière-plan
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- CODE -->
+    <div id="ex-code" class="tab-panel">
+      <pre><code class="language-typescript">@Controller({ path: 'maps', version: '1' })
+@PublicExternalRoute({ authType: 'api-key', scope: 'areas:read' })
+@UseGuards(
+  AuthorizationGuard(MapsService, MapV2, ['clients', 'metadatas'], 'mapId'),
+  CreditGuard,
+)
+export default class PublicMapsController {
+
+  @Get(':mapId/areas/locate')
+  @Can(Action.Read)
+  @CreditCost(2)
+  @ApiVersion({ version: '1', introducedAt: '2026-06-25' })
+  async locate(
+    @Param('mapId') mapId: string,
+    @Query() { address }: LocateAreaQueryDto,
+  ): Promise&lt;AreaLocationResponseDto&gt; {
+    const areas = await this.areaService.findContainingPoint(mapId, address);
+    return {
+      areas: areas.map((a) => ({ uuid: a.uuid, label: a.label })),
+      geocoded: areas.geocoded,
+    };
+  }
+}
+
+// LocateAreaQueryDto
+export class LocateAreaQueryDto {
+  @IsString()
+  @ApiProperty({ example: '12 rue de la Paix, 75001 Paris' })
+  address: string;
+}</code></pre>
+    </div>
+
+  </div>
+</section>
+
+
+
+
+<!-- DÉCISIONS BLOQUANTES -->
+<!-- <section>
+  <h3>Avant de coder</h3>
+  <h2>Décisions <span style="color:var(--c-coral)">à prendre</span></h2>
+  <div class="cols">
+    <div>
+      <div class="card" style="border-color:rgba(248,113,113,.4);margin-bottom:.4em">
+        <div class="card-title" style="color:#f87171">1. URI versioning ou Header versioning ? <span style="font-size:.75em;font-weight:400;color:#f87171">bloquant</span></div>
+        <div class="card-sub"><span class="ic">/api/v1/...</span> vs header <span class="ic">X-API-Version: 1</span> — voir comparatif Point 4.</div>
+      </div>
+      <div class="card" style="border-color:rgba(248,113,113,.4);margin-bottom:.4em">
+        <div class="card-title" style="color:#f87171">2. Quand débiter les crédits ? <span style="font-size:.75em;font-weight:400;color:#f87171">bloquant</span></div>
+        <div class="card-sub">
+          <strong style="color:#fff">Option A</strong> — avant le handler (simple, débit même sur échec)<br>
+          <strong style="color:#fff">Option B</strong> — avant + remboursement sur échec<br>
+          <strong style="color:#2dd4a0">Option C</strong> — vérification avant, débit après sur 2xx uniquement
+        </div>
+      </div>
+      <div class="card" style="border-color:rgba(248,113,113,.4);margin-bottom:.4em">
+        <div class="card-title" style="color:#f87171">3. Les scopes sont-ils nécessaires ? <span style="font-size:.75em;font-weight:400;color:#f87171">bloquant</span></div>
+        <div class="card-sub">
+          <strong style="color:#fff">CASL seul</strong> — une clé compromise expose tout ce que le compte peut faire. Simple — <span class="ic">ScopeGuard</span> disparaît.<br>
+          <strong style="color:#fff">CASL + Scopes</strong> — le client limite volontairement le périmètre d'une clé. Modèle Stripe "restricted keys".
+        </div>
+      </div>
+      <div class="card" style="border-color:rgba(248,113,113,.4)">
+        <div class="card-title" style="color:#f87171">4. Cookie JWT périmé + route externe <span style="font-size:.75em;font-weight:400;color:#f87171">bloquant</span></div>
+        <div class="card-sub">Sur une route <span class="ic">@IsPublic()</span>, un cookie JWT expiré fait rejeter en 401 avant de lire la clé API.<br><br>
+          <strong style="color:#fff">Option A</strong> — modifier <span class="ic">JwtAccessAuthGuard</span> pour ignorer un JWT invalide sur <span class="ic">@IsPublic()</span><br>
+          <strong style="color:#fff">Option B</strong> — documenter : ne pas forwarder de cookies sur les appels API
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="border-color:rgba(245,158,11,.35);margin-bottom:.4em">
+        <div class="card-title" style="color:#f59e0b">5. Convention nommage/dossiers controllers externes <span style="font-size:.75em;font-weight:400;color:#f59e0b">important</span></div>
+        <div class="card-sub">
+          <strong style="color:#fff">Convention A — Nommage</strong><br>
+          <span class="ic">MapsController</span> (interne) vs <span class="ic">PublicMapsController</span> (externe). Simple.<br><br>
+          <strong style="color:#fff">Convention B — Dossiers</strong><br>
+          Tout sous <span class="ic">src/api/v1/</span> est externe, tout sous <span class="ic">src/</span> est interne. Vérifiable par CI.
+        </div>
+      </div>
+      <div class="card" style="border-color:rgba(245,158,11,.35);margin-bottom:.4em">
+        <div class="card-title" style="color:#f59e0b">6. Bucketing ThrottlerGuard <span style="font-size:.75em;font-weight:400;color:#f59e0b">important</span></div>
+        <div class="card-sub">Par IP (actuel) ou par prefix de clé pour les routes externes ? Voir Point 2.</div>
+      </div>
+      <div class="card" style="border-color:rgba(245,158,11,.35);margin-bottom:.4em">
+        <div class="card-title" style="color:#f59e0b">7. Dashboard de gestion des clés ? <span style="font-size:.75em;font-weight:400;color:#f59e0b">important</span></div>
+        <div class="card-sub">Créer, lister, révoquer depuis l'UI — ou uniquement via l'API ? Impact direct sur le périmètre front. Non bloquant pour le back.</div>
+      </div>
+      <div class="card" style="border-color:rgba(245,158,11,.35)">
+        <div class="card-title" style="color:#f59e0b">8. Quel historique dans /usage/history ? <span style="font-size:.75em;font-weight:400;color:#f59e0b">important</span></div>
+        <div class="card-sub">Par clé, par feature, croisé clé × feature ? Impacte l'implémentation de <span class="ic">DailyStat</span>. Voir Point 3.</div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:.5em;font-size:.6em;color:#94a3b8;display:flex;gap:1.2em">
+    <span><span style="color:#f87171;font-weight:600">bloquant</span> — nécessite une décision avant de commencer l'implémentation</span>
+    <span><span style="color:#f59e0b;font-weight:600">important</span> — à trancher avant la mise en production</span>
+  </div>
+</section> -->
+
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script>
+// Tab helper — works independently of Reveal
+function initTabs(container) {
+  if (!container) return;
+  container.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var wrap = btn.closest('.tab-wrap');
+      wrap.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      wrap.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+      btn.classList.add('active');
+      var panel = wrap.querySelector('#' + btn.getAttribute('data-tab'));
+      if (panel) panel.classList.add('active');
+    });
+  });
+}
+function initAllTabs() { document.querySelectorAll('.tab-wrap').forEach(initTabs); }
+document.addEventListener('DOMContentLoaded', initAllTabs);
+
+Reveal.initialize({
+  hash: true,
+  width: 1200,
+  height: 700,
+  margin: 0.04,
+  minScale: 0.2,
+  maxScale: 2.0,
+  center: false,
+  transition: 'fade',
+  transitionSpeed: 'fast',
+  controls: true,
+  progress: true,
+  slideNumber: 'c/t',
+  plugins: [RevealHighlight],
+});
+</script>
+</body>
+</html>
